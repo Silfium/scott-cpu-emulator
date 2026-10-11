@@ -38,8 +38,6 @@ And since this reference is meant for people who already read the book, terms de
 #### 3.1.1 description 
 
 **The Scott CPU's** four general-purpose registers *(R0 to R3)* hold only 32 bits in total, which is far too little for storing programs and data. To make up for this, the system includes a main memory **(Random Access Memory, RAM)** consisting of 256 8-bit registers, giving a capacity of 256 bytes. Each location is identified by a unique 8-bit address in the range ```0x00``` to ```0xFF``` (0 to 255).
-Access to the **RAM** is controlled by the **Memory Address Register** (MAR, see section 3.1.4), an 8-bit register that holds the address of the location to be read or written. All transfers between the **RAM** and the data bus, in either direction, use the address currently stored in the **MAR**. The target address must therefore be loaded into the **MAR** at least one clock cycle before the read or write operation begins.
-
 #### 3.1.2 Specification
 | Parameter           | Value                          |
 | ------------------- | ------------------------------ |
@@ -54,26 +52,26 @@ Access to the **RAM** is controlled by the **Memory Address Register** (MAR, see
 
 #### 3.1.3 Pin description
 
-| Pin | Name   | Direction     | Width (in bits) | Description                                           |
-| --- | ------ | ------------- | --------------- | ----------------------------------------------------- |
-| a   | ADDR   | Input         | 8               | Reads an address from the system's bus to the MAR     |
-| s0  | SET    | Input         | 1               | Sets the MAR register                                 |
-| s1  | ENABLE | Input         | 1               | Enables the MAR register                              |
-| i/o | DATA   | Bidirectional | 8               | Reads and writes data from and into the system's bus. |
-| s   | SET    | Input         | 1               | Write the i/o value to the addressed byte             |
-| e   | ENABLE | Input         | 1               | Put the addressed byte on i/o                         |
+| Pin | Name   | Direction     | Width (in bits) | Description                                                               |
+| --- | ------ | ------------- | --------------- | ------------------------------------------------------------------------- |
+| a   | ADDR   | Input         | 8               | Reads an address from the system's bus to the MAR ([see 3.1.4](#314-mar)) |
+| s0  | SET    | Input         | 1               | Sets the MAR register                                                     |
+| s1  | ENABLE | Input         | 1               | Enables the MAR register                                                  |
+| i/o | DATA   | Bidirectional | 8               | Reads and writes data from and into the system's bus.                     |
+| s   | SET    | Input         | 1               | Write the i/o value to the addressed byte                                 |
+| e   | ENABLE | Input         | 1               | Put the addressed byte on i/o                                             |
 
 #### 3.1.4 MAR
-**MAR** or *"Memory Address Register"* is an 8-bit register that stores the address (check the store and load instructions to write this part).
+Access to the **RAM** is controlled by the **Memory Address Register**, an 8-bit register that holds the address of the location to be read or written. All transfers between the **RAM** and the data bus, in either direction, use the address currently stored in the **MAR**. The target address must therefore be loaded into the **MAR** by the load and store intructions before the read or write operation begins.
 
 ## 3.2 CPU
 
-#### Overview
+#### 3.2.1 Overview
 
 **The Scott CPU** is an 8-bit educational processor designed to show how a computer works from the ground up. It is built entirely from basic logic gates and follows a **Von Neumann** architecture, with a single 8-bit data bus connecting its components: four general-purpose registers (R0 to R3), an arithmetic logic unit (ALU) with status flags, a control section driven by a clock and stepper, and 256 bytes of RAM. 
 Instructions are fetched from memory and executed in a fixed six-step cycle, and the compact instruction set covers arithmetic and logic operations, data movement, jumps, and input/output. 
 
-#### Specification
+#### 3.2.2 Specification
 
 | Parameter          | Specification                                          |
 | ------------------ | ------------------------------------------------------ |
@@ -84,14 +82,14 @@ Instructions are fetched from memory and executed in a fixed six-step cycle, and
 | Implementation     | Built entirely from basic logic gates (NAND-based)     |
 | Endianness         | Not applicable (single-byte data)                      |
 | Instruction length | 1 byte (2 bytes for DATA, JMP, JCAEZ)                  |
-#### Pin description
+#### 3.2.3 Pin description
 
 | Pin        | Name                   | Direction     | Width (in bits) | Description |
 | ---------- | ---------------------- | ------------- | --------------- | ----------- |
 | Bus system | ```Addr```, ```Data``` | Bidirectional | 8               |             |
 | s          | ```Data```             | Output        | 1               |             |
 
-#### Registers
+#### 3.2.4 Registers
 -  **R0, R1, R2 and R3 :** *(8-bit each)* the **general-purpose** registers of this system, connected to the system's bus and the control section. Can be set and enabled.
 - **ACC** **:** *(8-bit)* Stands for **accumulator**, the input cames from the ALU and the output is the system's bus. Can be set and enabled.
 - **TMP :** *(8-bit)* Stands for **temporary**, its input is the system's bus and it outputs to the XXX register. Can only be set since there's no need to control when it outputs bits.
@@ -110,24 +108,24 @@ Instructions are fetched from memory and executed in a fixed six-step cycle, and
 | R2                       | ```10``` |
 | R3                       | ```11``` |
 
-#### ALU
+#### 3.2.5 ALU
 
 ##### description
 
 The **ALU** is the part of the Scott CPU that does all of its calculations and comparisons. It takes two 8-bit inputs, performs one operation on them, and produces an 8-bit result plus a few status flags.
-##### 3.1.3 Pin description
+#####  Pin description
 
-| Pin        | Role       | Direction | Width  (bits) | Description             |
-| ---------- | ---------- | --------- | ------------- | ----------------------- |
-| a          | ```Data``` | Input     | 8             | ([see 3.1.4](#314-mar)) |
-| b          | ```Data``` | Input     | 8             |                         |
-| c          | ```Data``` | Output    | 8             |                         |
-| carry in   | ```Data``` | Input     | 1             |                         |
-| op         | ```Data``` | Input     | 3             |                         |
-| carry out  | ```Data``` | Output    | 1             |                         |
-| 'a' larger | ```Data``` | Output    | 1             |                         |
-| equal      | ```Data``` | Output    | 1             |                         |
-| zero       | ```Data``` | Output    | 1             |                         |
+| Pin        | Role       | Direction | Width  (bits) | Description                                                                 |
+| ---------- | ---------- | --------- | ------------- | --------------------------------------------------------------------------- |
+| a          | ```Data``` | Input     | 8             | First 8-bit operand (from the bus).                                         |
+| b          | ```Data``` | Input     | 8             | Second 8-bit operand (from the TMP register).                               |
+| c          | ```Data``` | Output    | 8             | 8-bit result of the operation, passed to the ACC register.                  |
+| carry in   | ```Data``` | Input     | 1             | 1-bit carry from the flags register, used by ADD, which adds it to the sum. |
+| op         | ```Data``` | Input     | 3             | 3-bit operation select that chooses which ALU operation is performed.       |
+| carry out  | ```Data``` | Output    | 1             | Set when an addition overflows 8 bits or a shift pushes a bit out.          |
+| 'a' larger | ```Data``` | Output    | 1             | Set when operand a is greater than operand b.                               |
+| equal      | ```Data``` | Output    | 1             | Set when operands a and b are identical.                                    |
+| zero       | ```Data``` | Output    | 1             | Set when the result c is all zeros.                                         |
 
 ##### Operation set and 'op'
 
@@ -144,7 +142,7 @@ The 'op' input (see pin description of the ALU) feeds into a *3x8 decoder* that 
 | XOR       | ```110``` |
 | CMP       | ```111``` |
 
-#### Instruction set
+#### 3.2.6 Instruction set
 
 The scot system uses a custom instruction set with *8 arithmetic and logic* instruction, *3 data movement*, *1 flag instruction*, *17 control flow* and *2 input and output* instructions.
 Each instruction can be expressed in two forms: assembly and machine code.
@@ -153,8 +151,8 @@ Each instruction can be expressed in two forms: assembly and machine code.
   For example, to add register R1 to register R3 and store the result in R3: 
   ```ADD R1, R3```
 - **A machine code representation :** Each instruction is encoded as one or two bytes. The upper four bits of the first byte form the opcode field, which selects the operation. The remaining bits hold the operand fields. Instructions that carry immediate data, such as DATA, use a second byte for that value. The instruction formats and the meaning of each field are described below. Bit 7 is the most significant bit and bit 0 is the least significant bit.
-![[instruction field.png]]
 
+![[instruction field.png]]
 ##### Arithmetic and logic instructions
 
 | Instruction  | Mnemonic | Opcode     | Operands            | Width | Description                                          |
@@ -212,7 +210,7 @@ Each instruction can be expressed in two forms: assembly and machine code.
 | output data    | OUT      | ```0111``` | ```data```, ```RB``` | 8     | Output ```RB``` to I/O as ```data``` |
 | output address | OUT      | ```0111``` | ```Addr```, ```RB``` | 8     | Output ```RB``` to I/O as ```Addr``` |
 
-#### Control panel
+#### 3.2.5 Control section
  
 
 #### Timing
