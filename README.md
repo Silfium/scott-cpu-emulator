@@ -152,7 +152,7 @@ Each instruction can be expressed in two forms: assembly and machine code.
   ```ADD R1, R3```
 - **A machine code representation :** Each instruction is encoded as one or two bytes. The upper four bits of the first byte form the opcode field, which selects the operation. The remaining bits hold the operand fields. Instructions that carry immediate data, such as DATA, use a second byte for that value. The instruction formats and the meaning of each field are described below. Bit 7 is the most significant bit and bit 0 is the least significant bit.
 
-![[instruction field.png]]
+![ALU block diagram](docs/fields.png)
 ##### Arithmetic and logic instructions
 
 | Instruction  | Mnemonic | Opcode     | Operands            | Width | Description                                          |
