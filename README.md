@@ -1,0 +1,218 @@
+
+
+
+# Intro 
+
+The 'Scott Cpu' is a simple educational 8-bit processor designed by J. Clark Scott in his book [But How Do It Know? - The Basic Principles of Computers for Everyone](https://www.amazon.com/dp/0615303765?lv=shuf&channelId=500&plpRedirect=mhFallback) as an educational tool to teach computer principles to its readers.
+The goal of this document is to serve as a datasheet for the processor, and the system surrounding it, that was studied in the book mentioned above to serve as a reference for a future project, a "Scott Cpu emulator" written in the C programming language.
+
+---
+# Prequisites
+
+---
+# Table of contents
+
+
+
+---
+# 1. Terminology
+
+In addition to the terms used in J. Clark Scott's _But How Do It Know?_, this document defines the following terms for clarity:
+
+- **Component:** A major functional unit of the system. This includes the CPU, the RAM, and every peripheral connected to the CPU (such as the keyboard and screen).
+- **Sub-component:** A part contained within a component. This includes registers (such as the MAR or the instruction register) and any other internal unit, such as the ALU.
+- **System:** The complete Scott CPU computer and the other components : CPU, RAM, and peripherals together.
+- **Peripheral:** A component that is not the CPU or RAM, such as the keyboard and screen.
+- **Pin:** A single connection point of a component. Every component connects to an outside wire via a pin.
+- **Signal:** The value carried on a pin or wire (high/low, 1/0).
+- **Port:** A group of related pins treated as one unit (e.g., an 8-bit data port).
+
+And since this reference is meant for people who already read the book, terms defined in it will not be redefined here.
+
+---
+# 2. System overview
+
+---
+# 3. Components
+## 3.1 RAM
+#### 3.1.1 description 
+
+**The Scott CPU's** four general-purpose registers *(R0 to R3)* hold only 32 bits in total, which is far too little for storing programs and data. To make up for this, the system includes a main memory **(Random Access Memory, RAM)** consisting of 256 8-bit registers, giving a capacity of 256 bytes. Each location is identified by a unique 8-bit address in the range ```0x00``` to ```0xFF``` (0 to 255).
+Access to the **RAM** is controlled by the **Memory Address Register** (MAR, see section 3.1.4), an 8-bit register that holds the address of the location to be read or written. All transfers between the **RAM** and the data bus, in either direction, use the address currently stored in the **MAR**. The target address must therefore be loaded into the **MAR** at least one clock cycle before the read or write operation begins.
+
+#### 3.1.2 Specification
+| Parameter           | Value                          |
+| ------------------- | ------------------------------ |
+| Capacity            | 256 bytes                      |
+| Word size           | 8 bits (1 byte)                |
+| Number of addresses | 256 (```0x0``` to ```0x255```) |
+| Address width       | 8 bits                         |
+| Data width          | 8 bits                         |
+| Sub-components      | MAR                            |
+| Read operation      | 1 clock cycle                  |
+| Write operation     | 1 clock cycle                  |
+
+#### 3.1.3 Pin description
+
+| Pin | Name   | Direction     | Width (in bits) | Description                                           |
+| --- | ------ | ------------- | --------------- | ----------------------------------------------------- |
+| a   | ADDR   | Input         | 8               | Reads an address from the system's bus to the MAR     |
+| s0  | SET    | Input         | 1               | Sets the MAR register                                 |
+| s1  | ENABLE | Input         | 1               | Enables the MAR register                              |
+| i/o | DATA   | Bidirectional | 8               | Reads and writes data from and into the system's bus. |
+| s   | SET    | Input         | 1               | Write the i/o value to the addressed byte             |
+| e   | ENABLE | Input         | 1               | Put the addressed byte on i/o                         |
+
+#### 3.1.4 MAR
+**MAR** or *"Memory Address Register"* is an 8-bit register that stores the address (check the store and load instructions to write this part).
+
+## 3.2 CPU
+
+#### Overview
+
+**The Scott CPU** is an 8-bit educational processor designed to show how a computer works from the ground up. It is built entirely from basic logic gates and follows a **Von Neumann** architecture, with a single 8-bit data bus connecting its components: four general-purpose registers (R0 to R3), an arithmetic logic unit (ALU) with status flags, a control section driven by a clock and stepper, and 256 bytes of RAM. 
+Instructions are fetched from memory and executed in a fixed six-step cycle, and the compact instruction set covers arithmetic and logic operations, data movement, jumps, and input/output. 
+
+#### Specification
+
+| Parameter          | Specification                                          |
+| ------------------ | ------------------------------------------------------ |
+| Architecture       | Custom 8-bit, von Neumann (shared program/data memory) |
+| Data width         | 8 bits                                                 |
+| Address width      | 8 bits                                                 |
+| Addressable memory | 256 bytes (RAM)                                        |
+| Implementation     | Built entirely from basic logic gates (NAND-based)     |
+| Endianness         | Not applicable (single-byte data)                      |
+| Instruction length | 1 byte (2 bytes for DATA, JMP, JCAEZ)                  |
+#### Pin description
+
+| Pin        | Name                   | Direction     | Width (in bits) | Description |
+| ---------- | ---------------------- | ------------- | --------------- | ----------- |
+| Bus system | ```Addr```, ```Data``` | Bidirectional | 8               |             |
+| s          | ```Data```             | Output        | 1               |             |
+
+#### Registers
+-  **R0, R1, R2 and R3 :** *(8-bit each)* the **general-purpose** registers of this system, connected to the system's bus and the control section. Can be set and enabled.
+- **ACC** **:** *(8-bit)* Stands for **accumulator**, the input cames from the ALU and the output is the system's bus. Can be set and enabled.
+- **TMP :** *(8-bit)* Stands for **temporary**, its input is the system's bus and it outputs to the XXX register. Can only be set since there's no need to control when it outputs bits.
+- **IR :** *(8-bit)*
+- **IAR :** *(8-bit)*
+- **Flags** : After each operation, the ALU reports its outcome through four single-bit flags, which are saved in the flags register and can be used by conditional jump instructions:
+	- *Carry:* Set when an addition overflows 8 bits, or when a shift pushes a bit out.
+	- *A-larger:* Set when the first input is greater than the second.
+	- *Equal:* Set when both inputs are identical.
+	- *Zero:* Set when the result is all zeros.
+
+| General prupose register | encoding |
+| ------------------------ | -------- |
+| R0                       | ```00``` |
+| R1                       | ```01``` |
+| R2                       | ```10``` |
+| R3                       | ```11``` |
+
+#### ALU
+
+##### description
+
+The **ALU** is the part of the Scott CPU that does all of its calculations and comparisons. It takes two 8-bit inputs, performs one operation on them, and produces an 8-bit result plus a few status flags.
+##### 3.1.3 Pin description
+
+| Pin        | Role       | Direction | Width  (bits) | Description             |
+| ---------- | ---------- | --------- | ------------- | ----------------------- |
+| a          | ```Data``` | Input     | 8             | ([see 3.1.4](#314-mar)) |
+| b          | ```Data``` | Input     | 8             |                         |
+| c          | ```Data``` | Output    | 8             |                         |
+| carry in   | ```Data``` | Input     | 1             |                         |
+| op         | ```Data``` | Input     | 3             |                         |
+| carry out  | ```Data``` | Output    | 1             |                         |
+| 'a' larger | ```Data``` | Output    | 1             |                         |
+| equal      | ```Data``` | Output    | 1             |                         |
+| zero       | ```Data``` | Output    | 1             |                         |
+
+##### Operation set and 'op'
+
+The 'op' input (see pin description of the ALU) feeds into a *3x8 decoder* that will decide which operation the ALU will carry according to the value of 'op'.
+
+| Operation | 'op' code |
+| --------- | --------- |
+| ADD       | ```000``` |
+| SHR       | ```001``` |
+| SHL       | ```010``` |
+| NOT       | ```011``` |
+| AND       | ```100``` |
+| OR        | ```101``` |
+| XOR       | ```110``` |
+| CMP       | ```111``` |
+
+#### Instruction set
+
+The scot system uses a custom instruction set with *8 arithmetic and logic* instruction, *3 data movement*, *1 flag instruction*, *17 control flow* and *2 input and output* instructions.
+Each instruction can be expressed in two forms: assembly and machine code.
+- **An assembly representation :** Each instruction is identified by a mnemonic, followed by its operands in the order listed in the instruction tables:
+  ```<mnemonic> <operand 1>, <operand 2>``` 
+  For example, to add register R1 to register R3 and store the result in R3: 
+  ```ADD R1, R3```
+- **A machine code representation :** Each instruction is encoded as one or two bytes. The upper four bits of the first byte form the opcode field, which selects the operation. The remaining bits hold the operand fields. Instructions that carry immediate data, such as DATA, use a second byte for that value. The instruction formats and the meaning of each field are described below. Bit 7 is the most significant bit and bit 0 is the least significant bit.
+![[instruction field.png]]
+
+##### Arithmetic and logic instructions
+
+| Instruction  | Mnemonic | Opcode     | Operands            | Width | Description                                          |
+| ------------ | -------- | ---------- | ------------------- | ----- | ---------------------------------------------------- |
+| add          | ADD      | ```1000``` | ```RA```, ```RB```  | 8     | Add ```RA``` and ```RB``` and put answer in ```RB``` |
+| shift right  | SHR      | ```1001``` | ```RA```, ```RB```  | 8     | Shift ```RA``` Right and put answer in ```RB```      |
+| shift left   | SHL      | ```1010``` | ```RA```, ```RB```  | 8     | Shift ```RA``` Left and put the answer in ```RB```   |
+| not          | NOT      | ```1011``` | ```RA```, ```RB```  | 8     | Not ```RA``` and put the answer in ```RB```          |
+| and          | AND      | ```1100``` | ```RA```, ```RB```  | 8     | And ```RA``` and ```RB``` and put answer in ```RB``` |
+| or           | OR       | ```1101``` | ```RA```, ```RB```  | 8     | Or ```RA``` and ```RB``` and put answer in RB        |
+| exclusive or | XOR      | ```1110``` | ```RA```, ```RB```  | 8     | Exclusive OR ```RA``` and ```RB``` into ```RB```     |
+| compare      | CMP      | ```1111``` | ```RA```, ```RB```  | 8     | Compare ```RA``` and ```RB```                        |
+
+##### Data movement instructions
+
+| Instruction | Mnemonic | Opcode     | Operands            | Width | Description                                |
+| ----------- | -------- | ---------- | ------------------- | ----- | ------------------------------------------ |
+| data        | DATA     | ```0010``` | ```RB```,```data``` | 16    | Load an 8-bit value in ```RB```            |
+| load        | LD       | ```0000``` | ```RA```, ```RB```  | 8     | Load ```RB``` from RAM address in ```RA``` |
+| store       | ST       | ```0001``` | ```RA```, ```RB```  | 8     | Store ```RB``` to RAM address in ```RA```  |
+
+##### Flag instructions
+
+| Instruction | Mnemonic | Opcode     | Operands            | Width | Description                                |
+| ----------- | -------- | ---------- | ------------------- | ----- | ------------------------------------------ |
+| clear flags | CLF      | ```0110``` | None                | 8     | Clear all flags                            |
+
+##### Control flow instructions
+
+| Mnemonic | Opcode     | Operands   | Width | Description                             |
+| -------- | ---------- | ---------- | ----- | --------------------------------------- |
+| JMPR     | ```0011``` | ```RB```   | 8     | Jump to the address in ```RB```         |
+| JMP      | ```0100``` | ```addr``` | 16    | Jump to ```Addr```                      |
+| JA       | ```0101``` | ```addr``` | 16    | Jump if Carry is on                     |
+| JC       | ```0101``` | ```addr``` | 16    | Jump if A is larger than B              |
+| JE       | ```0101``` | ```addr``` | 16    | Jump if A is Equal to B                 |
+| JZ       | ```0101``` | ```addr``` | 16    | Jump if the answer is Zero              |
+| JCA      | ```0101``` | ```addr``` | 16    | Jump if Carry or A larger               |
+| JCE      | ```0101``` | ```addr``` | 16    | Jump if Carry or A Equal B              |
+| JCZ      | ```0101``` | ```addr``` | 16    | Jump if Carry or answer is Zero         |
+| JAE      | ```0101``` | ```addr``` | 16    | Jump if A is larger or Equal to B       |
+| JAZ      | ```0101``` | ```addr``` | 16    | Jump if A is larger or answer is Zero   |
+| JEZ      | ```0101``` | ```addr``` | 16    | Jump if A Equals B or answer is Zero    |
+| JCAE     | ```0101``` | ```addr``` | 16    | Jump if Carry or A larger or Equal to B |
+| JCAZ     | ```0101``` | ```addr``` | 16    | Jump if Carry or A larger or Zero       |
+| JCEZ     | ```0101``` | ```addr``` | 16    | Jump if Carry or A Equals B or Zero     |
+| JAEZ     | ```0101``` | ```addr``` | 16    | Jump if A larger or Equal to B or Zero  |
+| JCAEZ    | ```0101``` | ```addr``` | 16    | Jump if Carry, A larger, Equal, or Zero |
+##### I/O instructions
+
+| Instruction    | Mnemonic | Opcode     | Operands             | Width | Description                          |
+| -------------- | -------- | ---------- | -------------------- | ----- | ------------------------------------ |
+| input data     | IN       | ```0111``` | ```data```, ```RB``` | 8     | Input I/O Data to ```RB```           |
+| input address  | IN       | ```0111``` | ```Addr```, ```RB``` | 8     | Input I/O Address to ```RB```        |
+| output data    | OUT      | ```0111``` | ```data```, ```RB``` | 8     | Output ```RB``` to I/O as ```data``` |
+| output address | OUT      | ```0111``` | ```Addr```, ```RB``` | 8     | Output ```RB``` to I/O as ```Addr``` |
+
+#### Control panel
+ 
+
+#### Timing
