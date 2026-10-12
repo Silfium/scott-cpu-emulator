@@ -19,13 +19,14 @@ The goal of this document is to serve as a datasheet for the processor, and the 
 
 In addition to the terms used in J. Clark Scott's _But How Do It Know?_, this document defines the following terms for clarity:
 
-- **Component:** A major functional unit of the system. This includes the CPU, the RAM, and every peripheral connected to the CPU (such as the keyboard and screen).
+- **Component:** A major functional unit of the system. This includes the CPU, the [RAM](#31-ram), and every peripheral connected to the CPU (such as the keyboard and screen).
 - **Sub-component:** A part contained within a component. This includes registers (such as the MAR or the instruction register) and any other internal unit, such as the ALU.
-- **System:** The complete Scott CPU computer and the other components : CPU, RAM, and peripherals together.
-- **Peripheral:** A component that is not the CPU or RAM, such as the keyboard and screen.
+- **System:** The complete Scott CPU computer and the other components : CPU, [RAM](#31-ram), and peripherals together.
+- **Peripheral:** A component that is not the CPU or [RAM](#31-ram), such as the keyboard and screen.
 - **Pin:** A single connection point of a component. Every component connects to an outside wire via a pin.
 - **Signal:** The value carried on a pin or wire (high/low, 1/0).
 - **Port:** A group of related pins treated as one unit (e.g., an 8-bit data port).
+- **von Neumann architecture:**
 
 And since this reference is meant for people who already read the book, terms defined in it will not be redefined here.
 
@@ -46,29 +47,29 @@ And since this reference is meant for people who already read the book, terms de
 | Number of addresses | 256 (```0x0``` to ```0x255```) |
 | Address width       | 8 bits                         |
 | Data width          | 8 bits                         |
-| Sub-components      | MAR                            |
+| Sub-components      | [MAR](#314-mar)                |
 | Read operation      | 1 clock cycle                  |
 | Write operation     | 1 clock cycle                  |
 
 #### 3.1.3 Pin description
 
-| Pin | Name   | Direction     | Width (in bits) | Description                                                               |
-| --- | ------ | ------------- | --------------- | ------------------------------------------------------------------------- |
-| a   | ADDR   | Input         | 8               | Reads an address from the system's bus to the MAR ([see 3.1.4](#314-mar)) |
-| s0  | SET    | Input         | 1               | Sets the MAR register                                                     |
-| s1  | ENABLE | Input         | 1               | Enables the MAR register                                                  |
-| i/o | DATA   | Bidirectional | 8               | Reads and writes data from and into the system's bus.                     |
-| s   | SET    | Input         | 1               | Write the i/o value to the addressed byte                                 |
-| e   | ENABLE | Input         | 1               | Put the addressed byte on i/o                                             |
+| Pin | Name   | Direction     | Width (in bits) | Description                                                   |
+| --- | ------ | ------------- | --------------- | ------------------------------------------------------------- |
+| a   | ADDR   | Input         | 8               | Reads an address from the system's bus to the [MAR](#314-mar) |
+| s0  | SET    | Input         | 1               | Sets the [MAR](#314-mar) register                             |
+| s1  | ENABLE | Input         | 1               | Enables the [MAR](#314-mar) register                          |
+| i/o | DATA   | Bidirectional | 8               | Reads and writes data from and into the system's bus.         |
+| s   | SET    | Input         | 1               | Write the i/o value to the addressed byte                     |
+| e   | ENABLE | Input         | 1               | Put the addressed byte on i/o                                 |
 
 #### 3.1.4 MAR
-Access to the **RAM** is controlled by the **Memory Address Register**, an 8-bit register that holds the address of the location to be read or written. All transfers between the **RAM** and the data bus, in either direction, use the address currently stored in the **MAR**. The target address must therefore be loaded into the **MAR** by the load and store intructions before the read or write operation begins.
+Access to the [RAM](#31-ram) is controlled by the **Memory Address Register**, an 8-bit register that holds the address of the location to be read or written. All transfers between the [RAM](#31-ram) and the data bus, in either direction, use the address currently stored in the **MAR**. The target address must therefore be loaded into the **MAR** by the load and store intructions before the read or write operation begins.
 
 ## 3.2 CPU
 
 #### 3.2.1 Overview
 
-**The Scott CPU** is an 8-bit educational processor designed to show how a computer works from the ground up. It is built entirely from basic logic gates and follows a **Von Neumann** architecture, with a single 8-bit data bus connecting its components: four general-purpose registers (R0 to R3), an arithmetic logic unit (ALU) with status flags, a control section driven by a clock and stepper, and 256 bytes of RAM. 
+**The Scott CPU** is an 8-bit educational processor designed to show how a computer works from the ground up. It is built entirely from basic logic gates and follows a **Von Neumann** architecture, with a single 8-bit data bus connecting its components: four general-purpose registers (R0 to R3), an arithmetic logic unit (ALU) with status flags, a control section driven by a clock and stepper, and 256 bytes of [RAM](#31-ram). 
 Instructions are fetched from memory and executed in a fixed six-step cycle, and the compact instruction set covers arithmetic and logic operations, data movement, jumps, and input/output. 
 
 #### 3.2.2 Specification
@@ -78,7 +79,7 @@ Instructions are fetched from memory and executed in a fixed six-step cycle, and
 | Architecture       | Custom 8-bit, von Neumann (shared program/data memory) |
 | Data width         | 8 bits                                                 |
 | Address width      | 8 bits                                                 |
-| Addressable memory | 256 bytes (RAM)                                        |
+| Addressable memory | 256 bytes ([RAM](#31-ram))                             |
 | Implementation     | Built entirely from basic logic gates (NAND-based)     |
 | Endianness         | Not applicable (single-byte data)                      |
 | Instruction length | 1 byte (2 bytes for DATA, JMP, JCAEZ)                  |
@@ -92,11 +93,7 @@ Instructions are fetched from memory and executed in a fixed six-step cycle, and
 #### 3.2.4 Registers
 -  **R0, R1, R2 and R3 :** *(8-bit each)* the **general-purpose** registers of this system, connected to the system's bus and the control section. Can be set and enabled.
 - **ACC** **:** *(8-bit)* Stands for **accumulator**, the input cames from the ALU and the output is the system's bus. Can be set and enabled.
-- **TMP :** *(8-bit)* Stands for **temporary**, its input is the system's bus and it outputs to the XXX register. Can only be set since there's no need to control when it outputs bits.d -o bin/simulator github.com/djhworld/simple-computer/cmd/simulator
-	@@go build -o bin/assembler github.com/djhworld/simple-computer/cmd/assembler
-	@@go build -o bin/generator github.com/djhworld/simple-computer/cmd/generator
-
-
+- **TMP :** *(8-bit)* Stands for **temporary**, its input is the system's bus and it outputs to the Bus 1. Can only be set since there's no need to control when it outputs bits.
 - **IR :** *(8-bit)*
 - **IAR :** *(8-bit)*
 - **Flags** : After each operation, the ALU reports its outcome through four single-bit flags, which are saved in the flags register and can be used by conditional jump instructions:
@@ -175,11 +172,11 @@ Each instruction can be expressed in two forms: assembly and machine code.
 
 ##### Data movement instructions
 
-| Instruction | Mnemonic | Opcode     | Operands            | Width | Description                                |
-| ----------- | -------- | ---------- | ------------------- | ----- | ------------------------------------------ |
-| data        | DATA     | ```0010``` | ```RB```,```data``` | 16    | Load an 8-bit value in ```RB```            |
-| load        | LD       | ```0000``` | ```RA```, ```RB```  | 8     | Load ```RB``` from RAM address in ```RA``` |
-| store       | ST       | ```0001``` | ```RA```, ```RB```  | 8     | Store ```RB``` to RAM address in ```RA```  |
+| Instruction | Mnemonic | Opcode     | Operands            | Width | Description                                           |
+| ----------- | -------- | ---------- | ------------------- | ----- | ----------------------------------------------------- |
+| data        | DATA     | ```0010``` | ```RB```,```data``` | 16    | Load an 8-bit value in ```RB```                       |
+| load        | LD       | ```0000``` | ```RA```, ```RB```  | 8     | Load ```RB``` from [RAM](#31-ram) address in ```RA``` |
+| store       | ST       | ```0001``` | ```RA```, ```RB```  | 8     | Store ```RB``` to [RAM](#31-ram) address in ```RA```  |
 
 ##### Flag instructions
 
