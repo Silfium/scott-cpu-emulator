@@ -37,7 +37,7 @@ And since this reference is meant for people who already read the book, terms de
 ## 3.1 RAM
 #### 3.1.1 description 
 
-**The Scott CPU's** four general-purpose registers *(R0 to R3)* hold only 32 bits in total, which is far too little for storing programs and data. To make up for this, the system includes a main memory **(Random Access Memory, RAM)** consisting of 256 8-bit registers, giving a capacity of 256 bytes. Each location is identified by a unique 8-bit address in the range ```0x00``` to ```0xFF``` (0 to 255).
+**The Scott CPU's** four general-purpose registers *(R0 to R3)* hold only 32 bits in total, which is far too little for storing programs and data. To make up for this, the system includes a main memory , [RAM](#31-ram) *(Random Access Memory)* consisting of 256 8-bit registers, giving a capacity of 256 bytes. Each location is identified by a unique 8-bit address in the range ```0x00``` to ```0xFF``` (0 to 255).
 #### 3.1.2 Specification
 | Parameter           | Value                          |
 | ------------------- | ------------------------------ |
@@ -92,7 +92,11 @@ Instructions are fetched from memory and executed in a fixed six-step cycle, and
 #### 3.2.4 Registers
 -  **R0, R1, R2 and R3 :** *(8-bit each)* the **general-purpose** registers of this system, connected to the system's bus and the control section. Can be set and enabled.
 - **ACC** **:** *(8-bit)* Stands for **accumulator**, the input cames from the ALU and the output is the system's bus. Can be set and enabled.
-- **TMP :** *(8-bit)* Stands for **temporary**, its input is the system's bus and it outputs to the XXX register. Can only be set since there's no need to control when it outputs bits.
+- **TMP :** *(8-bit)* Stands for **temporary**, its input is the system's bus and it outputs to the XXX register. Can only be set since there's no need to control when it outputs bits.d -o bin/simulator github.com/djhworld/simple-computer/cmd/simulator
+	@@go build -o bin/assembler github.com/djhworld/simple-computer/cmd/assembler
+	@@go build -o bin/generator github.com/djhworld/simple-computer/cmd/generator
+
+
 - **IR :** *(8-bit)*
 - **IAR :** *(8-bit)*
 - **Flags** : After each operation, the ALU reports its outcome through four single-bit flags, which are saved in the flags register and can be used by conditional jump instructions:
@@ -107,8 +111,11 @@ Instructions are fetched from memory and executed in a fixed six-step cycle, and
 | R1                       | ```01``` |
 | R2                       | ```10``` |
 | R3                       | ```11``` |
+#### 3.2.5 Bus 1
 
-#### 3.2.5 ALU
+A device positioned between the TMP register and the ALU. A part from the 8-bit value it receives from the TMP it has a one bit input, if on, it ignores the input received from the TMP and outputs the 8-bit signal ```0b00000001``` (equivalent to one in decimal) to the ALU (the 'b' intput pin).
+this is needed since certain instructions require the ALU to have a value of one in the 'b' input (see ).
+#### 3.2.6 ALU
 
 ##### description
 
@@ -142,7 +149,7 @@ The 'op' input (see pin description of the ALU) feeds into a *3x8 decoder* that 
 | XOR       | ```110``` |
 | CMP       | ```111``` |
 
-#### 3.2.6 Instruction set
+#### 3.2.7 Instruction set
 
 The scot system uses a custom instruction set with *8 arithmetic and logic* instruction, *3 data movement*, *1 flag instruction*, *17 control flow* and *2 input and output* instructions.
 Each instruction can be expressed in two forms: assembly and machine code.
@@ -210,7 +217,7 @@ Each instruction can be expressed in two forms: assembly and machine code.
 | output data    | OUT      | ```0111``` | ```data```, ```RB``` | 8     | Output ```RB``` to I/O as ```data``` |
 | output address | OUT      | ```0111``` | ```Addr```, ```RB``` | 8     | Output ```RB``` to I/O as ```Addr``` |
 
-#### 3.2.5 Control section
+#### 3.2.8 Control section
  
 
 #### Timing
