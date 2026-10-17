@@ -23,10 +23,11 @@ In addition to the terms used in J. Clark Scott's _But How Do It Know?_, this do
 - **Sub-component:** A part contained within a component. This includes registers (such as the MAR or the instruction register) and any other internal unit, such as the ALU.
 - **System:** The complete Scott CPU computer and the other components : CPU, [RAM](#31-ram), and peripherals together.
 - **Peripheral:** A component that is not the CPU or [RAM](#31-ram), such as the keyboard and screen.
-- **Pin:** A single connection point of a component. Every component connects to an outside wire via a pin.
+- **Pin:** A single connection point of a component or sub-component. Every component connects to an outside wire via a pin.
 - **Signal:** The value carried on a pin or wire (high/low, 1/0).
 - **Port:** A group of related pins treated as one unit (e.g., an 8-bit data port).
-- **von Neumann architecture:**
+- **von Neumann architecture:** Von Neumann Architecture refers to a computer architecture based on the design proposed by mathematician and physicist John Von Neumann in 1945. It consists of a processing unit, a control unit, and a memory to store data and instructions.
+- **Addr:** Short for address
 
 And since this reference is meant for people who already read the book, terms defined in it will not be redefined here.
 
@@ -40,16 +41,16 @@ And since this reference is meant for people who already read the book, terms de
 
 **The Scott CPU's** four general-purpose registers *(R0 to R3)* hold only 32 bits in total, which is far too little for storing programs and data. To make up for this, the system includes a main memory , [RAM](#31-ram) *(Random Access Memory)* consisting of 256 8-bit registers, giving a capacity of 256 bytes. Each location is identified by a unique 8-bit address in the range ```0x00``` to ```0xFF``` (0 to 255).
 #### 3.1.2 Specification
-| Parameter           | Value                          |
-| ------------------- | ------------------------------ |
-| Capacity            | 256 bytes                      |
-| Word size           | 8 bits (1 byte)                |
-| Number of addresses | 256 (```0x0``` to ```0x255```) |
-| Address width       | 8 bits                         |
-| Data width          | 8 bits                         |
-| Sub-components      | [MAR](#314-mar)                |
-| Read operation      | 1 clock cycle                  |
-| Write operation     | 1 clock cycle                  |
+| Parameter           | Value                         |
+| ------------------- | ----------------------------- |
+| Capacity            | 256 bytes                     |
+| Word size           | 8 bits (1 byte)               |
+| Number of addresses | 256 (```0x0``` to ```0xFF```) |
+| Address width       | 8 bits                        |
+| Data width          | 8 bits                        |
+| Sub-components      | [MAR](#314-mar)               |
+| Read operation      | 1 clock cycle                 |
+| Write operation     | 1 clock cycle                 |
 
 #### 3.1.3 Pin description
 
@@ -110,7 +111,7 @@ Instructions are fetched from memory and executed in a fixed six-step cycle, and
 | R3                       | ```11``` |
 #### 3.2.5 Bus 1
 
-A device positioned between the TMP register and the ALU. A part from the 8-bit value it receives from the TMP it has a one bit input, if on, it ignores the input received from the TMP and outputs the 8-bit signal ```0b00000001``` (equivalent to one in decimal) to the ALU (the 'b' intput pin).
+A device positioned between the TMP register and the ALU. A part from the 8-bit value it receives from the TMP it has a one bit input, if on, it ignores the input received from the TMP and outputs the 8-bit signal ```0b00000001``` (equivalent to 1 in decimal) to the ALU (the 'b' intput pin).
 this is needed since certain instructions require the ALU to have a value of one in the 'b' input (see ).
 #### 3.2.6 ALU
 
@@ -130,7 +131,6 @@ The **ALU** is the part of the Scott CPU that does all of its calculations and c
 | 'a' larger | ```Data``` | Output    | 1             | Set when operand a is greater than operand b.                               |
 | equal      | ```Data``` | Output    | 1             | Set when operands a and b are identical.                                    |
 | zero       | ```Data``` | Output    | 1             | Set when the result c is all zeros.                                         |
-
 ##### Operation set and 'op'
 
 The 'op' input (see pin description of the ALU) feeds into a *3x8 decoder* that will decide which operation the ALU will carry according to the value of 'op'.
@@ -145,7 +145,6 @@ The 'op' input (see pin description of the ALU) feeds into a *3x8 decoder* that 
 | OR        | ```101``` |
 | XOR       | ```110``` |
 | CMP       | ```111``` |
-
 #### 3.2.7 Instruction set
 
 The scot system uses a custom instruction set with *8 arithmetic and logic* instruction, *3 data movement*, *1 flag instruction*, *17 control flow* and *2 input and output* instructions.
@@ -154,7 +153,7 @@ Each instruction can be expressed in two forms: assembly and machine code.
   ```<mnemonic> <operand 1>, <operand 2>``` 
   For example, to add register R1 to register R3 and store the result in R3: 
   ```ADD R1, R3```
-- **A machine code representation :** Each instruction is encoded as one or two bytes. The upper four bits of the first byte form the opcode field, which selects the operation. The remaining bits hold the operand fields. Instructions that carry immediate data, such as DATA, use a second byte for that value. The instruction formats and the meaning of each field are described below. Bit 7 is the most significant bit and bit 0 is the least significant bit.
+- **A machine code representation :** Each instruction is encoded as one or two bytes. The upper four bits of the first byte form the opcode field, which selects the operation. The remaining bits hold the operand fields. Instructions that carry immediate data, use a second byte for that value. The instruction formats and the meaning of each field are described below. Bit 7 is the most significant bit and bit 0 is the least significant bit.
 
 ![ALU block diagram](docs/fields.png)
 ##### Arithmetic and logic instructions
@@ -169,7 +168,6 @@ Each instruction can be expressed in two forms: assembly and machine code.
 | or           | OR       | ```1101``` | ```RA```, ```RB```  | 8     | Or ```RA``` and ```RB``` and put answer in RB        |
 | exclusive or | XOR      | ```1110``` | ```RA```, ```RB```  | 8     | Exclusive OR ```RA``` and ```RB``` into ```RB```     |
 | compare      | CMP      | ```1111``` | ```RA```, ```RB```  | 8     | Compare ```RA``` and ```RB```                        |
-
 ##### Data movement instructions
 
 | Instruction | Mnemonic | Opcode     | Operands            | Width | Description                                           |
@@ -177,13 +175,11 @@ Each instruction can be expressed in two forms: assembly and machine code.
 | data        | DATA     | ```0010``` | ```RB```,```data``` | 16    | Load an 8-bit value in ```RB```                       |
 | load        | LD       | ```0000``` | ```RA```, ```RB```  | 8     | Load ```RB``` from [RAM](#31-ram) address in ```RA``` |
 | store       | ST       | ```0001``` | ```RA```, ```RB```  | 8     | Store ```RB``` to [RAM](#31-ram) address in ```RA```  |
-
 ##### Flag instructions
 
-| Instruction | Mnemonic | Opcode     | Operands            | Width | Description                                |
-| ----------- | -------- | ---------- | ------------------- | ----- | ------------------------------------------ |
-| clear flags | CLF      | ```0110``` | None                | 8     | Clear all flags                            |
-
+| Instruction | Mnemonic | Opcode     | Operands | Width | Description     |
+| ----------- | -------- | ---------- | -------- | ----- | --------------- |
+| clear flags | CLF      | ```0110``` | None     | 8     | Clear all flags |
 ##### Control flow instructions
 
 | Mnemonic | Opcode     | Operands   | Width | Description                             |
@@ -213,8 +209,27 @@ Each instruction can be expressed in two forms: assembly and machine code.
 | input address  | IN       | ```0111``` | ```Addr```, ```RB``` | 8     | Input I/O Address to ```RB```        |
 | output data    | OUT      | ```0111``` | ```data```, ```RB``` | 8     | Output ```RB``` to I/O as ```data``` |
 | output address | OUT      | ```0111``` | ```Addr```, ```RB``` | 8     | Output ```RB``` to I/O as ```Addr``` |
-
 #### 3.2.8 Control section
- 
 
-#### Timing
+##### description
+
+The control section coordinates the operation of all other CPU components. Driven by the system clock, it executes each instruction in a repeating fetch-decode-execute cycle divided into six timed steps. During the fetch phase, the instruction is read from memory into the **IR** register and the instruction address is incremented. During the execute phase, the control logic decodes the opcode and, using the current step and the [ALU](#326-alu)  flags (carry, A-larger, equal, zero), generates the enable and set signals that control data transfers over the shared 8-bit bus and select the [ALU](#326-alu) operation.
+
+##### Pin description
+
+##### stepper
+
+
+
+
+##### Timing
+
+| instuction           | 1   | 2   | 3   | 4                            | 5                                                    | 6                     |
+| -------------------- | --- | --- | --- | ---------------------------- | ---------------------------------------------------- | --------------------- |
+| Arithmetic and logic |     |     |     | enable RB and set TMP        | set the 'op' input in the ALU, enable RA and set ACC | Enable ACC and set RB |
+| Load                 |     |     |     | Enable RA and set MAR        | Enable RAM and set RB                                | No action             |
+| Store                |     |     |     | Enable RA and set MAR        | Enable RB and set RAM                                | No action             |
+| Clear flag           |     |     |     | Activate bus 1 and set Flags | No action                                            | No action             |
+|                      |     |     |     |                              |                                                      |                       |
+|                      |     |     |     |                              |                                                      |                       |
+
