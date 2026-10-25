@@ -4,7 +4,7 @@
 # Intro 
 
 The 'Scott Cpu' is a simple educational 8-bit processor designed by J. Clark Scott in his book [But How Do It Know? - The Basic Principles of Computers for Everyone](https://www.amazon.com/dp/0615303765?lv=shuf&channelId=500&plpRedirect=mhFallback) as an educational tool to teach computer principles to its readers.
-The goal of this document is to serve as a datasheet for the processor, and the system surrounding it, that was studied in the book mentioned above to serve as a reference for a future project, a "Scott Cpu emulator" written in the C programming language.
+The goal of this document is to serve as a datasheet for the processor, and the system surrounding it, that was studied in the book mentioned above to serve as a reference for a future project, a "Scott Cpu emulator" written in the C++ programming language.
 
 ---
 # Prequisites
@@ -33,6 +33,7 @@ And since this reference is meant for people who already read the book, terms de
 
 ---
 # 2. System overview
+*(not done yet)*
 
 ---
 # 3. Components
@@ -131,7 +132,7 @@ The **ALU** is the part of the Scott CPU that does all of its calculations and c
 | 'a' larger | ```Data``` | Output    | 1             | Set when operand a is greater than operand b.                               |
 | equal      | ```Data``` | Output    | 1             | Set when operands a and b are identical.                                    |
 | zero       | ```Data``` | Output    | 1             | Set when the result c is all zeros.                                         |
-##### Operation set and 'op'
+##### Operation set of the ALU and 'op'
 
 The 'op' input (see pin description of the ALU) feeds into a *3x8 decoder* that will decide which operation the ALU will carry according to the value of 'op'.
 
@@ -149,10 +150,13 @@ The 'op' input (see pin description of the ALU) feeds into a *3x8 decoder* that 
 
 The scot system uses a custom instruction set with *8 arithmetic and logic* instruction, *3 data movement*, *1 flag instruction*, *17 control flow* and *2 input and output* instructions.
 Each instruction can be expressed in two forms: assembly and machine code.
+
 - **An assembly representation :** Each instruction is identified by a mnemonic, followed by its operands in the order listed in the instruction tables:
   ```<mnemonic> <operand 1>, <operand 2>``` 
   For example, to add register R1 to register R3 and store the result in R3: 
   ```ADD R1, R3```
+  Unlike the mahine code representation which is meant to be decoded by the cpu, the asssembly representation is meant to be a human readable version of machine.
+
 - **A machine code representation :** Each instruction is encoded as one or two bytes. The upper four bits of the first byte form the opcode field, which selects the operation. The remaining bits hold the operand fields. Instructions that carry immediate data, use a second byte for that value. The instruction formats and the meaning of each field are described below. Bit 7 is the most significant bit and bit 0 is the least significant bit.
 
 ![ALU block diagram](docs/fields.png)
@@ -224,12 +228,20 @@ The control section coordinates the operation of all other CPU components. Drive
 
 ##### Timing
 
-| instuction           | 1   | 2   | 3   | 4                            | 5                                                    | 6                     |
-| -------------------- | --- | --- | --- | ---------------------------- | ---------------------------------------------------- | --------------------- |
-| Arithmetic and logic |     |     |     | enable RB and set TMP        | set the 'op' input in the ALU, enable RA and set ACC | Enable ACC and set RB |
-| Load                 |     |     |     | Enable RA and set MAR        | Enable RAM and set RB                                | No action             |
-| Store                |     |     |     | Enable RA and set MAR        | Enable RB and set RAM                                | No action             |
-| Clear flag           |     |     |     | Activate bus 1 and set Flags | No action                                            | No action             |
-|                      |     |     |     |                              |                                                      |                       |
-|                      |     |     |     |                              |                                                      |                       |
+| instuction       | step 1                               | step 2                    | step 3                     | . . .                              | step 7            |
+| ---------------- | ------------------------------------ | ------------------------- | -------------------------- | ---------------------------------- | ----------------- |
+| all instructions | *Enable*: IAR/bus 1 - *set*: ACC/MAR | *Enable*: RAM - *set*: IR | *Enable*: ACC - *set*: IAR | *(see the table below for 4 to 6)* | reset the stepper |
+
+| instuction                | step 4                              | step 5                                                                          | step 6                     |
+| ------------------------- | ----------------------------------- | ------------------------------------------------------------------------------- | -------------------------- |
+| Arithmetic and logic      | *enable*: RB - *set*: TMP           | set the 'op' input in the ALU, enable RA and set ACC                            | *enable*: ACC -*set*: RB   |
+| Load                      | *enable*: RA - *set*: MAR           | *enable*: RAM - *set*: RB                                                       | No action                  |
+| Store                     | *enable*: RA - *set*: MAR           | *enable*: RB - *set*: RAM                                                       | No action                  |
+| Clear flag                | *activate*: bus 1 - *set*: Flags    | No action                                                                       | No action                  |
+| jump (JMP RB)             | *enable*: RB - *set*: IAR           | No action                                                                       | No action                  |
+| jump (JMP ADDR)           | *enable*: IAR - *set*: MAR          | *enable*: RAM - *set*: IAR                                                      | No action                  |
+| jump (all other variants) | *enable:* IAR/Bus 1, *set*: MAR/ACC | *enable*: ACC - *set*: IAR                                                      | *enable*: RAM - *set*: IAR |
+| Input                     | No action                           | *set:* RB - *i/o bus*: clk e, data/addr (on if the first operand is an address) | No action                  |
+| Output                    | *enable*: RB - *i/o bus*:           | No action                                                                       | No action                  |
+
 
