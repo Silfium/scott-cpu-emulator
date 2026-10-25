@@ -221,8 +221,42 @@ The control section coordinates the operation of all other CPU components. Drive
 
 ##### Pin description
 
+| Pin   | Name | Direction | Width (in bits) | Description |
+| ----- | ---- | --------- | --------------- | ----------- |
+| op    | DATA | Output    | 3               |             |
+| bus 1 | SET  | Output    | 1               |             |
+| i/o   | DATA | Output    | 3               |             |
+| C     | DATA | Input     | 1               |             |
+| A     | DATA | Input     | 1               |             |
+| E     | DATA | Input     | 1               |             |
+| Z     | DATA | Input     | 1               |             |
+The control section can set every register in the cpu and enable all of them except the IR and TMP registers. Since the book didn't name the pins setting or enabling these registers we will create names for them for the sake of documentation.
+
+| Pin            | Name   | Direction | Width (in bits) | Description                           |
+| -------------- | ------ | --------- | --------------- | ------------------------------------- |
+| s0, s1, s2, s3 | SET    | Output    | 1 (each)        | Sets the general purpose registers    |
+| s_tmp          | SET    | Output    | 1               |                                       |
+| s_iar          | SET    | Output    | 1               |                                       |
+| s_ir           | SET    | Output    | 1               |                                       |
+| s_acc          | SET    | Output    | 1               |                                       |
+| s_mar          | SET    | Output    | 1               | Sets the [MAR](#314-mar) register     |
+| s_ram          | SET    | Output    | 1               |                                       |
+| s_flags        | SET    | Output    |                 |                                       |
+| e0, e1, e3, e4 | ENABLE | Output    | 1               | Enables the general purpose registers |
+| e_iar          | ENABLE | Output    | 1               |                                       |
+| e_acc          | ENABLE | Output    | 1               |                                       |
+| e_mar          | ENABLE | Output    | 1               |                                       |
+| e_ram          | ENABLE | Output    | 1               |                                       |
+
+And finally an 8 bit pin feeds the contents of the IR register when the s_ir is on
+
+| Pin      | Name | Direction | Width (in bits) | Description                                                     |
+| -------- | ---- | --------- | --------------- | --------------------------------------------------------------- |
+| ir_input | DATA | Input     | 8               | Inputs the value in instruction register in the control section |
+
 ##### stepper
 
+The stepper is a device that, apparte
 
 
 
