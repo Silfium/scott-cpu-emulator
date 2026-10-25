@@ -230,6 +230,7 @@ The control section coordinates the operation of all other CPU components. Drive
 | A     | DATA | Input     | 1               |             |
 | E     | DATA | Input     | 1               |             |
 | Z     | DATA | Input     | 1               |             |
+
 The control section can set every register in the cpu and enable all of them except the IR and TMP registers. Since the book didn't name the pins setting or enabling these registers we will create names for them for the sake of documentation.
 
 | Pin            | Name   | Direction | Width (in bits) | Description                           |
