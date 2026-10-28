@@ -11,8 +11,7 @@ IMGUI_SRC = \
     include/imgui/backends/imgui_impl_opengl3.cpp
 
 SRC = src/main.cpp
-TARGET = .build/app
+TARGET = build/app
 
 $(TARGET): $(SRC) $(IMGUI_SRC)
-	mkdir -p .build
 	$(CXX) $(CXXFLAGS) $(SRC) $(IMGUI_SRC) -o $(TARGET) $(LDLIBS)
