@@ -2,3 +2,5 @@
 build/
 bin/
 
+imgui.ini
+imgui_*.ini
