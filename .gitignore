@@ -4,3 +4,6 @@ bin/
 
 imgui.ini
 imgui_*.ini
+
+src/utils/conthrax
+src/utils/conthrax.zip

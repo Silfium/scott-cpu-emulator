@@ -1,11 +1,15 @@
 #include <iostream>
 #include <GLFW/glfw3.h>
+#include <bitset>
+
 
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) { glViewport(0, 0, width, height); } 
+
+uint8_t ram[256] = {};
 
 int main() {
 	
@@ -48,9 +52,48 @@ int main() {
 		//--------------------------------|
 		//first window test
 		ImGui::Begin("testing Imgui");
-		ImGui::Text("test UI");
+		ImGui::Text("%s", std::bitset<8>(100).to_string().c_str());
 		ImGui::End();
 
+
+		//--------------------------------|
+		//--------------------------------|
+		//RAM window
+		ImGui::SetNextWindowPos(ImVec2(.0f, .0f), ImGuiCond_Always);
+		ImGui::SetNextWindowSize(ImVec2(500, ImGui::GetIO().DisplaySize.y - 200), ImGuiCond_Always);
+		ImGui::Begin("RAM Viewer", nullptr, ImGuiWindowFlags_NoResize 
+						| ImGuiWindowFlags_NoCollapse);
+
+		//RAM table
+		ImGui::SetWindowFontScale(1.2f);
+		ImGui::BeginTable("RAM display table", 9, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg); {
+			ImGui::TableSetupColumn("Addr");
+			for (int col = 0; col < 8; col++)
+            			ImGui::TableSetupColumn(nullptr);
+			
+			ImGui::TableHeadersRow();
+
+        		for (int row = 0; row < 16; row++)
+        		{	
+            			ImGui::TableNextRow();
+            			ImGui::TableNextColumn();
+            			ImGui::Text("0x%02X", row * 16);
+
+            			for (int col = 0; col < 8; col++) {
+                			ImGui::TableNextColumn();
+                			ImGui::Text("%02X", ram[row * 8 + col]);
+            			}
+        		}
+			ImGui::EndTable();		
+		}
+		ImGui::End();
+
+
+		//---------------------------------|
+		//---------------------------------|
+		//Registers window
+	
+		//rendering 
 		ImGui::Render();
 		glClear(GL_COLOR_BUFFER_BIT);
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
