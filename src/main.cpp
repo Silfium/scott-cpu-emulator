@@ -96,7 +96,7 @@ int main() {
 
 		//---------------------------------|
 		//---------------------------------|
-		//Register Window
+		//Script window Window
 		ImGui::SetNextWindowPos(ImVec2(1000, 0), ImGuiCond_Always);
 		ImGui::SetNextWindowSize(ImVec2(300, ImGui::GetIO().DisplaySize.y), ImGuiCond_Always);
 		ImGui::SetNextWindowPos(ImVec2(1000, 0), ImGuiCond_Always);
