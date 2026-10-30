@@ -23,7 +23,7 @@ int main() {
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(1);
 	
-	//setting the gloViewport properly
+	//setting the glViewport properly
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	int screen_height, screen_width;
 	glfwGetFramebufferSize(window, &screen_width, &screen_height);
@@ -36,7 +36,6 @@ int main() {
 	ImGui::StyleColorsDark();
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 130");
-
 	
 	//------------------------------------|
 	//Main looop
@@ -60,10 +59,9 @@ int main() {
 		//--------------------------------|
 		//RAM window
 		ImGui::SetNextWindowPos(ImVec2(.0f, .0f), ImGuiCond_Always);
-		ImGui::SetNextWindowSize(ImVec2(500, ImGui::GetIO().DisplaySize.y - 200), ImGuiCond_Always);
+		ImGui::SetNextWindowSize(ImVec2(500, ImGui::GetIO().DisplaySize.y - 300), ImGuiCond_Always);
 		ImGui::Begin("RAM Viewer", nullptr, ImGuiWindowFlags_NoResize 
 						| ImGuiWindowFlags_NoCollapse);
-
 		//RAM table
 		ImGui::SetWindowFontScale(1.2f);
 		ImGui::BeginTable("RAM display table", 9, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg); {
@@ -84,7 +82,30 @@ int main() {
                 			ImGui::Text("%02X", ram[row * 8 + col]);
             			}
         		}
-			ImGui::EndTable();		
+			ImGui::EndTable();
+
+		//---------------------------------|
+		//---------------------------------|
+		//keybord window
+		ImGui::SetNextWindowPos(ImVec2(0, ImGui::GetIO().DisplaySize.y - 300), ImGuiCond_Always);
+		ImGui::SetNextWindowSize(ImVec2(1000, 300), ImGuiCond_Always);
+		ImGui::Begin("Keyboard", nullptr, ImGuiWindowFlags_NoResize |
+						  ImGuiWindowFlags_NoCollapse);
+		ImGui::Text("testing this bitch ass window");
+		ImGui::End();
+
+		//---------------------------------|
+		//---------------------------------|
+		//Register Window
+		ImGui::SetNextWindowPos(ImVec2(1000, 0), ImGuiCond_Always);
+		ImGui::SetNextWindowSize(ImVec2(300, ImGui::GetIO().DisplaySize.y), ImGuiCond_Always);
+		ImGui::SetNextWindowPos(ImVec2(1000, 0), ImGuiCond_Always);
+		ImGui::Begin("Registers", nullptr, ImGuiWindowFlags_NoResize |
+						   ImGuiWindowFlags_NoCollapse);
+	        
+		ImGui::End();	
+
+
 		}
 		ImGui::End();
 
