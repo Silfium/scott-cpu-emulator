@@ -3,7 +3,7 @@
 #include <array>
 
 
-uint8_t system_bus;
+inline uint8_t system_bus;
 
 struct CPU   {
 	uint8_t r0, r1, r2, r3;
@@ -15,12 +15,12 @@ struct CPU   {
 
 	void alu(uint8_t op);
 	void control_section();
-}
+};
 
 struct RAM {
-	std::array<uint8_t, 256 ram{};
+	std::array<uint8_t, 256> ram{};
 	uint8_t mar;
-}
+};
 
 //struct keyboard {}
 //struct display {}

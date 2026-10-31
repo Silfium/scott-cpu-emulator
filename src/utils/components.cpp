@@ -4,7 +4,7 @@
 
 
 
-void::alu(uint8_t op) {
+void CPU::alu(uint8_t op) {
 	switch(op) {
 		case 0x00:
 			//ADD
@@ -25,11 +25,11 @@ void::alu(uint8_t op) {
 			break;
 		case 0x04:
 			//AND
-			acc = system_bus & tmp
+			acc = system_bus & tmp;
 			break;
 		case 0x05:
 			//OR
-			acc = system_bus | tmp
+			acc = system_bus | tmp;
 			break;
 		case 0x06:
 			//XOR
