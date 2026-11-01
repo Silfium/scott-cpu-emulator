@@ -18,7 +18,7 @@ struct flagReg {
 };
 
 struct CPU   {
-	Reg r0, r1, r2, r3;
+	std::array<Reg, 4> general_purpose={r0, r1, r2, r3};
 	Reg acc;
 	Reg tmp;
 	Reg ir;
@@ -30,12 +30,16 @@ struct CPU   {
 	void alu(uint8_t op);
 	void control_section();
 	void reset();
-};
+}; inline CPU cpu;
 
 struct RAM {
-	std::array<uint8_t, 256> ram{};
-	uint8_t mar;
-};
+	std::array<uint8_t, 256> ram256{};
+	Reg mar;
+
+	void enable();
+	void set();
+	
+}; inline RAM ram;
 
 //struct keyboard {}
 //struct display {}

@@ -3,7 +3,7 @@
 #include <limits>
 
 
-void Reg::set() {value = system_bus;}
+void Reg::set()    {value = system_bus;}
 void Reg::enable() {system_bus = value;}
 
 void flagReg::set(flags flag) {
@@ -25,15 +25,28 @@ void flagReg::set(flags flag) {
 
 
 void CPU::step_cycle() {
+
 	//stepper in 1
 	iar.enable();
 	acc.value = iar.value + 1; // rework this part need to figure out how to get the bitch ass bus 1 involved
+	ram.mar.set();
+
 	//stepper in 2
-		//enable ram
-		//ir = ram output
+        ram.enable();
+	ir.set();
+
 	//stepper in 3
 	acc.enable();
 	iar.set();
+
+	// stepper in 4
+	uint8_t RA, RB;
+	uint8_t temp = ir.value;    //need to keep the ir value intact since am gonna diplay it in imgui
+	if (temp >= 0x80) { //means its an arthmetic/logis instruction
+		
+	}
+	alu()
+		
 	//stepper in 7
 	stepper = 1;
 }
@@ -86,5 +99,7 @@ void CPU::reset() {
 }
 
 
+void RAM::enable() {system_bus = ram256[mar];}
+void RAM::set()    {ram256[mar] = system_bus;}
 
 
