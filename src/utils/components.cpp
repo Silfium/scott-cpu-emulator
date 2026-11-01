@@ -41,11 +41,6 @@ void CPU::step_cycle() {
 
 	// stepper in 4
 	uint8_t RA, RB;
-	uint8_t temp = ir.value;    //need to keep the ir value intact since am gonna diplay it in imgui
-	if (temp >= 0x80) { //means its an arthmetic/logis instruction
-		
-	}
-	alu()
 		
 	//stepper in 7
 	stepper = 1;

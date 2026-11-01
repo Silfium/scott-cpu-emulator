@@ -18,6 +18,7 @@ struct flagReg {
 };
 
 struct CPU   {
+	Reg r0, r1, r2, r3;
 	std::array<Reg, 4> general_purpose={r0, r1, r2, r3};
 	Reg acc;
 	Reg tmp;
