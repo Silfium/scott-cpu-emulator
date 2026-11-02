@@ -1,15 +1,20 @@
 #include <iostream>
+#include <string>
 #include <GLFW/glfw3.h>
 #include <bitset>
-
 
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 
+#include "utils/utils.h"
+#include "utils/components.h"
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) { glViewport(0, 0, width, height); } 
 
-uint8_t ram[256] = {};
+//uint8_t ram[256] = {};
+
+void display_register(std::string regName);
 
 int main() {
 	
@@ -18,7 +23,7 @@ int main() {
 	}
 
 	//setting the glfw window and activating v_sync
-	GLFWwindow* window = glfwCreateWindow(1000, 1000, "app", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1000, 1000, "emulator 8-bit build", NULL, NULL);
 	if (!window) {glfwTerminate(); return -1;}
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(1);
@@ -58,56 +63,45 @@ int main() {
 		//--------------------------------|
 		//--------------------------------|
 		//RAM window
-		ImGui::SetNextWindowPos(ImVec2(.0f, .0f), ImGuiCond_Always);
-		ImGui::SetNextWindowSize(ImVec2(500, ImGui::GetIO().DisplaySize.y - 300), ImGuiCond_Always);
+		ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x - 320, .0f), ImGuiCond_Always);
+		ImGui::SetNextWindowSize(ImVec2(320, ImGui::GetIO().DisplaySize.y), ImGuiCond_Always);
 		ImGui::Begin("RAM Viewer", nullptr, ImGuiWindowFlags_NoResize 
 						| ImGuiWindowFlags_NoCollapse);
 		//RAM table
 		ImGui::SetWindowFontScale(1.2f);
-		ImGui::BeginTable("RAM display table", 9, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg); {
+		ImGui::BeginTable("RAM display table", 5, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg); {
 			ImGui::TableSetupColumn("Addr");
-			for (int col = 0; col < 8; col++)
+			for (int col = 0; col < 4; col++)
             			ImGui::TableSetupColumn(nullptr);
 			
 			ImGui::TableHeadersRow();
 
-        		for (int row = 0; row < 16; row++)
+        		for (int row = 0; row < 32; row++)
         		{	
             			ImGui::TableNextRow();
             			ImGui::TableNextColumn();
-            			ImGui::Text("0x%02X", row * 16);
+            			ImGui::Text("0x%02X", row * 4);
 
-            			for (int col = 0; col < 8; col++) {
+            			for (int col = 0; col < 4; col++) {
                 			ImGui::TableNextColumn();
-                			ImGui::Text("%02X", ram[row * 8 + col]);
+                			ImGui::Text("%02X", ram.ram256[row * 4 + col]);
             			}
         		}
 			ImGui::EndTable();
-
-		//---------------------------------|
-		//---------------------------------|
-		//keybord window
-		ImGui::SetNextWindowPos(ImVec2(0, ImGui::GetIO().DisplaySize.y - 300), ImGuiCond_Always);
-		ImGui::SetNextWindowSize(ImVec2(1000, 300), ImGuiCond_Always);
-		ImGui::Begin("Keyboard", nullptr, ImGuiWindowFlags_NoResize |
-						  ImGuiWindowFlags_NoCollapse);
-		ImGui::Text("testing this bitch ass window");
-		ImGui::End();
-
-		//---------------------------------|
-		//---------------------------------|
-		//Script window Window
-		ImGui::SetNextWindowPos(ImVec2(1000, 0), ImGuiCond_Always);
-		ImGui::SetNextWindowSize(ImVec2(300, ImGui::GetIO().DisplaySize.y), ImGuiCond_Always);
-		ImGui::SetNextWindowPos(ImVec2(1000, 0), ImGuiCond_Always);
-		ImGui::Begin("Registers", nullptr, ImGuiWindowFlags_NoResize |
-						   ImGuiWindowFlags_NoCollapse);
-	        
-		ImGui::End();	
-
-
 		}
 		ImGui::End();
+
+		//---------------------------------|
+		//---------------------------------|
+		//registers window Window
+		ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x - 320 - 384, 0), ImGuiCond_Always);
+		ImGui::SetNextWindowSize(ImVec2(384, ImGui::GetIO().DisplaySize.y), ImGuiCond_Always);
+		ImGui::Begin("Registers", nullptr, ImGuiWindowFlags_NoResize |
+						   ImGuiWindowFlags_NoCollapse);
+		ImGui::SetWindowFontScale(1.2f);
+
+
+		ImGui::End();	
 
 
 		//---------------------------------|
@@ -132,4 +126,8 @@ int main() {
 
 	std::cout << "test 2\n";
 	return 0;
+}
+
+void display_register(std::string regName) {
+	
 }

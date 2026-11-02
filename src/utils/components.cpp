@@ -1,4 +1,5 @@
 #include "components.h"
+#include "utils.h"
 #include <cstdint>
 #include <limits>
 
@@ -6,7 +7,7 @@
 void Reg::set()    {value = system_bus;}
 void Reg::enable() {system_bus = value;}
 
-void flagReg::set(flags flag) {
+void flagReg::set(flagType flag) {
 	switch(flag) {
 		case CARRY_OUT:
 		       value = value | CARRY_OUT;
@@ -40,7 +41,7 @@ void CPU::step_cycle() {
 	iar.set();
 
 	// stepper in 4
-	uint8_t RA, RB;
+	decode_ir();
 		
 	//stepper in 7
 	stepper = 1;
@@ -50,40 +51,39 @@ void CPU::control_section() {
 }
 void CPU::alu(uint8_t op) {
 	switch(op) {
-		case 0x00:
+		case 8:
 			//ADD
-			if (system_bus > std::numeric_limits<uint8_t>::max() - tmp.value) {flagsReg.set(CARRY_OUT);}
+			if (system_bus > std::numeric_limits<uint8_t>::max() - tmp.value) {flags.set(CARRY_OUT);}
 			acc.value = tmp.value + system_bus;
 			break;
-		case 0x01:
+		case 9:
 			//SHR
 			acc.value = system_bus >> 1;
 			break;
-		case 0x02:
+		case 10:
 			//SHL
 			acc.value = system_bus << 1;
 			break;
-		case 0x03:
+		case 11:
 			//NOT
 			acc.value = ~system_bus;
 			break;
-		case 0x04:
+		case 12:
 			//AND
 			acc.value = system_bus & tmp.value;
 			break;
-		case 0x05:
+		case 13:
 			//OR
 			acc.value = system_bus | tmp.value;
 			break;
-		case 0x06:
+		case 14:
 			//XOR
 			acc.value = system_bus ^ tmp.value;
 			break;
-		case 0x07:
+		case 15:
 			//CMP
 			break;
 	}
-	stepper = 1;
 }
 void CPU::reset() {
 	r0.value = 0; r1.value = 0; r2.value = 0; r3.value = 0;
@@ -94,7 +94,7 @@ void CPU::reset() {
 }
 
 
-void RAM::enable() {system_bus = ram256[mar];}
-void RAM::set()    {ram256[mar] = system_bus;}
+void RAM::enable() {system_bus = ram256[mar.value];}
+void RAM::set()    {ram256[mar.value] = system_bus;}
 
 

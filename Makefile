@@ -11,7 +11,8 @@ IMGUI_SRC = \
     include/imgui/backends/imgui_impl_opengl3.cpp
 
 SRC = src/main.cpp
+UTILS = src/utils/components.cpp
 TARGET = build/app
 
 $(TARGET): $(SRC) $(IMGUI_SRC)
-	$(CXX) $(CXXFLAGS) $(SRC) $(IMGUI_SRC) -o $(TARGET) $(LDLIBS)
+	$(CXX) $(CXXFLAGS) $(SRC) $(IMGUI_SRC) $(UTILS) -o $(TARGET) $(LDLIBS)
