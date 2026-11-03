@@ -12,9 +12,7 @@
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) { glViewport(0, 0, width, height); } 
 
-//uint8_t ram[256] = {};
-
-void display_register(std::string regName);
+void display_register(std::string regName, Reg reg, ImFont* font);
 
 int main() {
 	
@@ -41,7 +39,12 @@ int main() {
 	ImGui::StyleColorsDark();
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 130");
-	
+
+
+	//adding font
+	ImGuiIO& io = ImGui::GetIO();
+	ImFont* conthrax = io.Fonts->AddFontFromFileTTF("docs/Conthrax-SemiBold.otf", 14.0f);
+
 	//------------------------------------|
 	//Main looop
 	while(!glfwWindowShouldClose(window)) {
@@ -98,8 +101,10 @@ int main() {
 		ImGui::SetNextWindowSize(ImVec2(384, ImGui::GetIO().DisplaySize.y), ImGuiCond_Always);
 		ImGui::Begin("Registers", nullptr, ImGuiWindowFlags_NoResize |
 						   ImGuiWindowFlags_NoCollapse);
+		ImGui::SetWindowFontScale(1.4f);
+		ImGui::Text("CPU");
 		ImGui::SetWindowFontScale(1.2f);
-
+		display_register("ACC", cpu.acc, conthrax);
 
 		ImGui::End();	
 
@@ -128,6 +133,27 @@ int main() {
 	return 0;
 }
 
-void display_register(std::string regName) {
-	
+void display_register(std::string regName, Reg reg, ImFont* font) {
+	ImGui::PushFont(font);
+
+	ImGui::Text("%s", regName.c_str());
+	ImGui::SameLine();
+
+	ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(40, 45, 60, 255));
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, IM_COL32(60, 70, 90, 255));
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, IM_COL32(80, 90, 110, 255));
+
+	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 8.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1.0f);
+
+	ImGui::Button("0000 1010", ImVec2(120, 24)); 
+	ImGui::SameLine();
+	ImGui::Button("0xFF", ImVec2(60, 24));
+	ImGui::SameLine();
+	ImGui::Button("255", ImVec2(60, 24));
+
+	ImGui::PopStyleVar(2);
+	ImGui::PopStyleColor(3);
+
+	ImGui::PopFont();
 }
