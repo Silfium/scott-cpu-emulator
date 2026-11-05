@@ -257,7 +257,7 @@ And finally an 8 bit pin feeds the contents of the IR register when the s_ir is 
 
 ##### stepper
 
-The stepper is a device that, apparte
+The **stepper** is a control unit component responsible for sequencing the execution of instructions. It generates a sequence of timing steps  that coordinate the different operations required during each instruction cycle. At each step, it activates one out of its 7 steps, step 1 to 6 are activated each clock cycle in order until the 7th which resets the stepper back to 1.
 
 
 
@@ -267,16 +267,17 @@ The stepper is a device that, apparte
 | ---------------- | ------------------------------------ | ------------------------- | -------------------------- | ---------------------------------- | ----------------- |
 | all instructions | *Enable*: IAR/bus 1 - *set*: ACC/MAR | *Enable*: RAM - *set*: IR | *Enable*: ACC - *set*: IAR | *(see the table below for 4 to 6)* | reset the stepper |
 
-| instuction                | step 4                              | step 5                                                                          | step 6                     |
-| ------------------------- | ----------------------------------- | ------------------------------------------------------------------------------- | -------------------------- |
-| Arithmetic and logic      | *enable*: RB - *set*: TMP           | set the 'op' input in the ALU, enable RA and set ACC                            | *enable*: ACC -*set*: RB   |
-| Load                      | *enable*: RA - *set*: MAR           | *enable*: RAM - *set*: RB                                                       | No action                  |
-| Store                     | *enable*: RA - *set*: MAR           | *enable*: RB - *set*: RAM                                                       | No action                  |
-| Clear flag                | *activate*: bus 1 - *set*: Flags    | No action                                                                       | No action                  |
-| jump (JMP RB)             | *enable*: RB - *set*: IAR           | No action                                                                       | No action                  |
-| jump (JMP ADDR)           | *enable*: IAR - *set*: MAR          | *enable*: RAM - *set*: IAR                                                      | No action                  |
-| jump (all other variants) | *enable:* IAR/Bus 1, *set*: MAR/ACC | *enable*: ACC - *set*: IAR                                                      | *enable*: RAM - *set*: IAR |
-| Input                     | No action                           | *set:* RB - *i/o bus*: clk e, data/addr (on if the first operand is an address) | No action                  |
-| Output                    | *enable*: RB - *i/o bus*:           | No action                                                                       | No action                  |
+| instuction                | step 4                               | step 5                                                                          | step 6                     |
+| ------------------------- | ------------------------------------ | ------------------------------------------------------------------------------- | -------------------------- |
+| Load                      | *enable*: RA - *set*: MAR            | *enable*: RAM - *set*: RB                                                       | No action                  |
+| Store                     | *enable*: RA - *set*: MAR            | *enable*: RB - *set*: RAM                                                       | No action                  |
+| Data                      | *enable:* IAR/bus 1 - *set:* MAR/ACC | *enable:* RAM - *set:* RB                                                       | *enable:* ACC - *set:* IAR |
+| jump (JMP RB)             | *enable*: RB - *set*: IAR            | No action                                                                       | No action                  |
+| jump (JMP ADDR)           | *enable*: IAR - *set*: MAR           | *enable*: RAM - *set*: IAR                                                      | No action                  |
+| jump (all other variants) | *enable:* IAR/Bus 1, *set*: MAR/ACC  | *enable*: ACC - *set*: IAR                                                      | *enable*: RAM - *set*: IAR |
+| Clear flag                | *activate*: bus 1 - *set*: Flags     | No action                                                                       | No action                  |
+| Input                     | No action                            | *set:* RB - *i/o bus*: clk e, data/addr (on if the first operand is an address) | No action                  |
+| Output                    | *enable*: RB - *i/o bus*:            | No action                                                                       | No action                  |
+| Arithmetic and logic      | *enable*: RB - *set*: TMP            | set the 'op' input in the ALU, enable RA and set ACC                            | *enable*: ACC -*set*: RB   |
 
 

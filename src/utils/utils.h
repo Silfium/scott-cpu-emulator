@@ -56,12 +56,24 @@ inline void decode_ir() {
 				break;
 
 			case 2: // data
-				// not documented yet
+				//step 4
+				cpu.iar.enable();
+				cpu.acc.value = cpu.iar.value + 1;
+				ram.mar.set();
+				// step 5
+				ram.enable();
+				cpu.general_purpose[rb].set();
+				// step 6
+				cpu.acc.enable();
+				cpu.iar.set();
 				break;
 
 			case 3:// jump to rb
-
-
+			       // step 4
+			       cpu.general_purpose[rb].enable();
+			       cpu.iar.set();
+			       // no step 5 and 6
+			       break;
 
 			case 4: // jump with addr
 				// stepper in 4
