@@ -11,7 +11,7 @@ struct Reg {
 	void enable();
 };
 
-enum flagType : uint8_t {CARRY_OUT=0x01, A_LARGER=0x02, EQUAL=0x04, ZERO=0x08};
+enum flagType : uint8_t {CARRY_OUT=1, A_LARGER=2, EQUAL=4, ZERO=8};
 struct flagReg {
 	uint8_t value;
 	void set(flagType flag);
@@ -25,11 +25,17 @@ struct CPU   {
 	Reg ir;
 	Reg iar;
 	flagReg flags;
+	bool bus1;
 	uint8_t stepper;
 
 	void step_cycle();
+	// decode 
+	void decode_ir();
+	void get_opcode();
+	void get_ra();
+	void get_rb();
 	void alu(uint8_t op);
-	void control_section();
+	// reset and setup
 	void reset();
 }; inline CPU cpu;
 
