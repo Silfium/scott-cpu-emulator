@@ -31,9 +31,9 @@ struct CPU   {
 	void step_cycle();
 	// decode 
 	void decode_ir();
-	void get_opcode();
-	void get_ra();
-	void get_rb();
+	uint8_t get_opcode();
+	uint8_t get_ra();
+	uint8_t get_rb();
 	void alu(uint8_t op);
 	// reset and setup
 	void reset();

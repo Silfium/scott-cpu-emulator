@@ -73,7 +73,7 @@ void CPU::decode_ir() {
                 tmp.set();
                 //stepper in 5
                 general_purpose[ra].enable();
-                alu(opcode, false); //acc is set in the alu func no need to do it here
+                alu(opcode); //acc is set in the alu func no need to do it here
                 //stepper in 6
                 acc.enable();
                 general_purpose[rb].set();
@@ -134,8 +134,8 @@ void CPU::decode_ir() {
 
                         case 5: // jump all other variants
                                 // first we 'and' the least segnificant nibble with the flag register to see if one of the conditions is met
-                                uint8_t nibble = cpu.ir.value & 15; //seperate the nibble
-                                if (nibble & flags.value) {
+                                 //seperate the nibble and compare to flags.value
+                                if ( (cpu.ir.value & 0b0000'1111) & flags.value ) {
                                         // step 4
 					bus1 = true;
                                         iar.enable();
@@ -178,11 +178,11 @@ void CPU::alu(uint8_t op) {
 				break;
 			case 9://SHR 
 			        (flags.value & 1) ? (acc.value = system_bus >> 1 | 0b10000000)  :  (acc.value = system_bus >> 1); //is there a carry in
-			        if (system_bus & 1) { (flags.set(CARRY_OUT); } 	
+			        if (system_bus & 1) { flags.set(CARRY_OUT); } 	
 				break;
 			case 10://SHL
 			        (flags.value & 1) ? (acc.value = system_bus << 1 | 1)  :  (acc.value = system_bus << 1); // is there a carry in	
-			        if (system_bus & 0b10000000) { (flags.set(CARRY_OUT); } 		
+			        if (system_bus & 0b10000000) { flags.set(CARRY_OUT); } 		
 				break;
 			case 11://NOT
 				acc.value = ~system_bus;
