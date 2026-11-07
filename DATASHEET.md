@@ -4,8 +4,10 @@
 # Introduction
 
 The 'Scott Cpu' is a simple educational 8-bit processor designed by J. Clark Scott in his book [But How Do It Know? - The Basic Principles of Computers for Everyone](https://www.amazon.com/dp/0615303765?lv=shuf&channelId=500&plpRedirect=mhFallback) as an educational tool to teach computer principles to its readers.
-Since the processor mentioned in the book have no datasheet, the goal of this document is to serve as a datasheet for the processor that was studied in the book mentioned above to serve as a reference for a future project, a "Scott CPU emulator" written in the C++ programming language.
-***N.B.*** I cannot stress enough how important it is to read the book first. This document is not meant to replace the original material. It was written as a reference for developing the emulator and for using it.
+
+Since the processor mentioned in the book have no datasheet, the goal of this document is to serve as a datasheet for the processor that was studied in the book mentioned above to serve as a reference for a future project, a **"Scott CPU emulator"** written in the C++ programming language.
+
+***N.B.** I cannot stress enough how important it is to read the book first. I tried to "dumb down" this document as much as possible since this is meant as an educational tool but still, this is NOT a replacement of the original material.*
 
 ---
 # Table of contents
@@ -33,17 +35,17 @@ Since the processor mentioned in the book have no datasheet, the goal of this do
 
 In addition to the terms used in J. Clark Scott's _But How Do It Know?_, this document defines the following terms for clarity:
 
-- **Component:** A major functional unit of the system. This includes the CPU, the RAM, and every peripheral connected to the CPU (such as the keyboard and screen).
-- **Sub-component:** A part contained within a component. This includes registers (such as the MAR or the instruction register) and any other internal unit, such as the ALU.
-- **System:** The complete Scott CPU computer and the other components : CPU, RAM, and peripherals together.
-- **Peripheral:** A component that is not the CPU or RAM, such as the keyboard and screen.
+- **Component:** A major functional unit of the system. This includes the **CPU**, the **RAM**, and every peripheral connected to the **CPU** (such as the keyboard and screen).
+- **Sub-component:** A part contained within a component. This includes registers (such as the **MAR** or the instruction register) and any other internal unit, such as the **ALU**.
+- **System:** The complete **Scott** **CPU** computer and the other components : **CPU**, **RAM**, and peripherals together.
+- **Peripheral:** A component that is not the **CPU** or **RAM**, such as the keyboard and screen.
 - **Pin:** A single connection point of a component or sub-component. Every component connects to an outside wire via a pin.
 - **Signal:** The value carried on a pin or wire (high/low, 1/0).
 - **Port:** A group of related pins treated as one unit (e.g., an 8-bit data port).
 - **von Neumann architecture:** Von Neumann Architecture refers to a computer architecture based on the design proposed by mathematician and physicist John Von Neumann in 1945. It consists of a processing unit, a control unit, and a memory to store data and instructions.
 - **Addr:** Short for address
 
-And since this reference is meant for people who already read the book, terms defined in it will not be redefined here.
+***N.B.** And since this reference is meant for people who already read the book, terms defined in it will not be redefined here.*
 
 ---
 # 2. System overview
@@ -54,7 +56,7 @@ And since this reference is meant for people who already read the book, terms de
 ## 3.1 RAM
 #### 3.1.1 description 
 
-**The Scott CPU's** four general-purpose registers *(R0 to R3)* hold only 32 bits in total, which is far too little for storing programs and data. To make up for this, the system includes a main memory , RAM *(Random Access Memory)* consisting of 256 8-bit registers, giving a capacity of 256 bytes. Each location is identified by a unique 8-bit address in the range ```0x00``` to ```0xFF``` (0 to 255).
+**The Scott CPU's** four general-purpose registers *(R0 to R3)* hold only 32 bits in total, which is far too little for storing programs and data. To make up for this, the system includes a main memory , **RAM** *(Random Access Memory)* consisting of **256 8-bit registers**, giving a capacity of 256 bytes. Each location is identified by a unique 8-bit address in the range ```0x00``` to ```0xFF``` (0 to 255).
 #### 3.1.2 Specification
 | Parameter           | Value                         |
 | ------------------- | ----------------------------- |
@@ -69,23 +71,23 @@ And since this reference is meant for people who already read the book, terms de
 
 #### 3.1.3 Pin description
 
-| Pin | Name   | Direction     | Width (in bits) | Description                                                   |
-| --- | ------ | ------------- | --------------- | ------------------------------------------------------------- |
-| a   | ADDR   | Input         | 8               | Reads an address from the system's bus to the [MAR](#314-mar) |
-| s0  | SET    | Input         | 1               | Sets the [MAR](#314-mar) register                             |
-| s1  | ENABLE | Input         | 1               | Enables the [MAR](#314-mar) register                          |
-| i/o | DATA   | Bidirectional | 8               | Reads and writes data from and into the system's bus.         |
-| s   | SET    | Input         | 1               | Write the i/o value to the addressed byte                     |
-| e   | ENABLE | Input         | 1               | Put the addressed byte on i/o                                 |
+| Pin | Role   | Direction     | Width (in bits) | Description                                               |
+| --- | ------ | ------------- | --------------- | --------------------------------------------------------- |
+| a   | ADDR   | Input         | 8               | Reads an address from the system's **bus** to the **MAR** |
+| s0  | SET    | Input         | 1               | Sets the **MAR** register                                 |
+| s1  | ENABLE | Input         | 1               | Enables the **MAR** register                              |
+| i/o | DATA   | Bidirectional | 8               | Reads and writes data from and into the system's **bus**. |
+| s   | SET    | Input         | 1               | Write the i/o value to the addressed byte                 |
+| e   | ENABLE | Input         | 1               | Put the addressed byte on i/o                             |
 
 #### 3.1.4 MAR
-Access to the [RAM](#31-ram) is controlled by the **Memory Address Register**, an 8-bit register that holds the address of the location to be read or written. All transfers between the [RAM](#31-ram) and the data bus, in either direction, use the address currently stored in the **MAR**. The target address must therefore be loaded into the **MAR** by the load and store intructions before the read or write operation begins.
+Access to the RAM is controlled by the **Memory Address Register**, an 8-bit register that holds the address of the location to be read or written. All transfers between the RAM and the data bus, in either direction, use the address currently stored in the **MAR**. The target address must therefore be loaded into the **MAR** by the load and store intructions before the read or write operation begins.
 
 ## 3.2 CPU
 
 #### 3.2.1 Overview
 
-**The Scott CPU** is an 8-bit educational processor designed to show how a computer works from the ground up. It is built entirely from basic logic gates and follows a **Von Neumann** architecture, with a single 8-bit data bus connecting its components: four general-purpose registers (R0 to R3), an arithmetic logic unit (ALU) with status flags, a control section driven by a clock and stepper, and 256 bytes of [RAM](#31-ram). 
+**The Scott CPU** is an 8-bit educational processor designed to show how a computer works from the ground up. It is built entirely from basic logic gates and follows a **Von Neumann** architecture, with a single 8-bit data bus connecting its components: four general-purpose registers (**R0 to R3**), an arithmetic logic unit (**ALU**) with **status flags**, a **control section** driven by a **clock** and a **stepper,** and 256 bytes of **RAM**. 
 Instructions are fetched from memory and executed in a fixed six-step cycle, and the compact instruction set covers arithmetic and logic operations, data movement, jumps, and input/output. 
 
 #### 3.2.2 Specification
@@ -95,24 +97,27 @@ Instructions are fetched from memory and executed in a fixed six-step cycle, and
 | Architecture       | Custom 8-bit, von Neumann (shared program/data memory) |
 | Data width         | 8 bits                                                 |
 | Address width      | 8 bits                                                 |
-| Addressable memory | 256 bytes ([RAM](#31-ram))                             |
+| Addressable memory | 256 bytes (**RAM**)                                    |
 | Implementation     | Built entirely from basic logic gates (NAND-based)     |
 | Endianness         | Not applicable (single-byte data)                      |
 | Instruction length | 1 byte (2 bytes for DATA, JMP, JCAEZ)                  |
 #### 3.2.3 Pin description
 
-| Pin        | Name                   | Direction     | Width (in bits) | Description |
-| ---------- | ---------------------- | ------------- | --------------- | ----------- |
-| Bus system | ```Addr```, ```Data``` | Bidirectional | 8               |             |
-| s          | ```Data```             | Output        | 1               |             |
+| Pin        | Role       | Direction     | Width (in bits) | Description                                                           |
+| ---------- | ---------- | ------------- | --------------- | --------------------------------------------------------------------- |
+| Bus system | ADDR, DATA | Bidirectional | 8               | Connects the **CPU** to the system's **bus** and all other components |
+| s_mar      | SET        | Output        | 1               | set the **MAR** register                                              |
+| s_ram      | SET        | Output        | 1               | set the **RAM**                                                       |
+| e_ram      | ENABLE     | Output        | 1               | enable the **RAM**                                                    |
+
 
 #### 3.2.4 Registers
--  **R0, R1, R2 and R3 :** *(8-bit each)* the **general-purpose** registers of this system, connected to the system's bus and the control section. Can be set and enabled.
+-  **R0, R1, R2 and R3 :** *(8-bit each)* the **general-purpose** registers of this system, connected to the **system's bus** and the **control** **section**. Can be set and enabled.
 - **ACC** **:** *(8-bit)* Stands for **accumulator**, the input cames from the ALU and the output is the system's bus. Can be set and enabled.
-- **TMP :** *(8-bit)* Stands for **temporary**, its input is the system's bus and it outputs to the Bus 1. Can only be set since there's no need to control when it outputs bits.
+- **TMP :** *(8-bit)* Stands for **temporary**, its input is the **system's bus** and it outputs to the **Bus** **1**. Can only be set since there's no need to control when it outputs bits.
 - **IR :** *(8-bit)*
 - **IAR :** *(8-bit)*
-- **Flags** : After each operation, the ALU reports its outcome through four single-bit flags, which are saved in the flags register and can be used by conditional jump instructions:
+- **Flags** : After each operation, the **ALU** reports its outcome through four single-bit flags, which are saved in the **flags** **register** and can be used by conditional jump instructions:
 	- *Carry:* Set when an addition overflows 8 bits, or when a shift pushes a bit out.
 	- *A-larger:* Set when the first input is greater than the second.
 	- *Equal:* Set when both inputs are identical.
@@ -126,29 +131,29 @@ Instructions are fetched from memory and executed in a fixed six-step cycle, and
 | R3                       | ```11``` |
 #### 3.2.5 Bus 1
 
-A device positioned between the TMP register and the ALU. A part from the 8-bit value it receives from the TMP it has a one bit input, if on, it ignores the input received from the TMP and outputs the 8-bit signal ```0b00000001``` (equivalent to 1 in decimal) to the ALU (the 'b' intput pin).
-this is needed since certain instructions require the ALU to have a value of one in the 'b' input (see ).
+A device positioned between the **TMP** register and the **ALU**. A part from the 8-bit value it receives from the **TMP** it has a one bit input, if on, it ignores the input received from the **TMP** and outputs the 8-bit signal ```0b00000001``` (equivalent to 1 in decimal) to the **ALU** (the 'b' intput pin).
+this is needed since certain instructions require the **ALU** to have a value of one in the 'b' input (see ).
 #### 3.2.6 ALU
 
 ##### description
 
-The **ALU** is the part of the Scott CPU that does all of its calculations and comparisons. It takes two 8-bit inputs, performs one operation on them, and produces an 8-bit result plus a few status flags.
+The **ALU** is the part of the **Scott** **CPU** that does all of its calculations and comparisons. It takes two 8-bit inputs, performs one operation on them, and produces an 8-bit result plus a few status flags.
 #####  Pin description
 
-| Pin        | Role       | Direction | Width  (bits) | Description                                                                 |
-| ---------- | ---------- | --------- | ------------- | --------------------------------------------------------------------------- |
-| a          | ```Data``` | Input     | 8             | First 8-bit operand (from the bus).                                         |
-| b          | ```Data``` | Input     | 8             | Second 8-bit operand (from the TMP register).                               |
-| c          | ```Data``` | Output    | 8             | 8-bit result of the operation, passed to the ACC register.                  |
-| carry in   | ```Data``` | Input     | 1             | 1-bit carry from the flags register, used by ADD, which adds it to the sum. |
-| op         | ```Data``` | Input     | 3             | 3-bit operation select that chooses which ALU operation is performed.       |
-| carry out  | ```Data``` | Output    | 1             | Set when an addition overflows 8 bits or a shift pushes a bit out.          |
-| 'a' larger | ```Data``` | Output    | 1             | Set when operand a is greater than operand b.                               |
-| equal      | ```Data``` | Output    | 1             | Set when operands a and b are identical.                                    |
-| zero       | ```Data``` | Output    | 1             | Set when the result c is all zeros.                                         |
+| Pin        | Role | Direction | Width  (bits) | Description                                                                             |
+| ---------- | ---- | --------- | ------------- | --------------------------------------------------------------------------------------- |
+| a          | DATA | Input     | 8             | First 8-bit operand (from the **bus**).                                                 |
+| b          | DATA | Input     | 8             | Second 8-bit operand (from the **TMP** register).                                       |
+| c          | DATA | Output    | 8             | 8-bit result of the operation, passed to the **ACC** register.                          |
+| carry in   | DATA | Input     | 1             | 1-bit carry from the **flags** **register**, used by **ADD**, which adds it to the sum. |
+| op         | DATA | Input     | 3             | 3-bit operation select that chooses which **ALU** operation is performed.               |
+| carry out  | DATA | Output    | 1             | Set when an addition overflows 8 bits or a shift pushes a bit out.                      |
+| 'a' larger | DATA | Output    | 1             | Set when operand a is greater than operand b.                                           |
+| equal      | DATA | Output    | 1             | Set when operands a and b are identical.                                                |
+| zero       | DATA | Output    | 1             | Set when the result c is all zeros.                                                     |
 ##### Operation set of the ALU and 'op'
 
-The 'op' input (see pin description of the ALU) feeds into a *3x8 decoder* that will decide which operation the ALU will carry according to the value of 'op'.
+The 'op' input (see pin description of the **ALU**) feeds into a *3x8 decoder* that will decide which operation the **ALU** will carry according to the value of 'op'.
 
 | Operation | 'op' code |
 | --------- | --------- |
@@ -167,7 +172,7 @@ Each instruction can be expressed in two forms: assembly and machine code.
 
 - **An assembly representation :** Each instruction is identified by a mnemonic, followed by its operands in the order listed in the instruction tables:
   ```<mnemonic> <operand 1>, <operand 2>``` 
-  For example, to add register R1 to register R3 and store the result in R3: 
+  For example, to add register **R1** to register **R3** and store the result in **R3**: 
   ```ADD R1 R3```
   Unlike the mahine code representation which is meant to be decoded by the cpu, the asssembly representation is meant to be a human readable version of machine.
 
@@ -188,11 +193,12 @@ Each instruction can be expressed in two forms: assembly and machine code.
 | compare      | CMP      | ```1111``` | ```RA```, ```RB``` | 8     | Compare ```RA``` and ```RB```                        |
 ##### Data movement instructions
 
-| Instruction | Mnemonic | Opcode     | Operands            | Width | Description                                           |
-| ----------- | -------- | ---------- | ------------------- | ----- | ----------------------------------------------------- |
-| data        | DATA     | ```0010``` | ```RB```,```data``` | 16    | Load an 8-bit value in ```RB```                       |
-| load        | LD       | ```0000``` | ```RA```, ```RB```  | 8     | Load ```RB``` from [RAM](#31-ram) address in ```RA``` |
-| store       | ST       | ```0001``` | ```RA```, ```RB```  | 8     | Store ```RB``` to [RAM](#31-ram) address in ```RA```  |
+| Instruction | Mnemonic | Opcode     | Operands            | Width | Description                                    |
+| ----------- | -------- | ---------- | ------------------- | ----- | ---------------------------------------------- |
+| data        | DATA     | ```0010``` | ```RB```,```data``` | 16    | Load an 8-bit value in ```RB```                |
+| load        | LD       | ```0000``` | ```RA```, ```RB```  | 8     | Load ```RB``` from **RAM** address in ```RA``` |
+| store       | ST       | ```0001``` | ```RA```, ```RB```  | 8     | Store ```RB``` to **RAM** address in ```RA```  |
+
 ##### Flag instructions
 
 | Instruction | Mnemonic | Opcode     | Operands | Width | Description     |
@@ -227,47 +233,47 @@ Each instruction can be expressed in two forms: assembly and machine code.
 | input address  | IN       | ```0111``` | ```Addr```, ```RB``` | 8     | Input I/O Address to ```RB```        |
 | output data    | OUT      | ```0111``` | ```data```, ```RB``` | 8     | Output ```RB``` to I/O as ```data``` |
 | output address | OUT      | ```0111``` | ```Addr```, ```RB``` | 8     | Output ```RB``` to I/O as ```Addr``` |
-#### 3.2.8 Control section
+#### 3.2.8 Control section and timing
 
 ##### description
 
-The control section coordinates the operation of all other CPU components. Driven by the system clock, it executes each instruction in a repeating fetch-decode-execute cycle divided into six timed steps. During the fetch phase, the instruction is read from memory into the **IR** register and the instruction address is incremented. During the execute phase, the control logic decodes the opcode and, using the current step and the [ALU](#326-alu)  flags (carry, A-larger, equal, zero), generates the enable and set signals that control data transfers over the shared 8-bit bus and select the [ALU](#326-alu) operation.
+The **control section** coordinates the operation of all other **CPU** components. Driven by the system clock, it executes each instruction in a repeating fetch-decode-execute cycle divided into six timed steps. During the fetch phase, the instruction is read from memory into the **IR** register and the instruction address is incremented. During the execute phase, the control logic decodes the opcode and, using the current step and the **ALU**  flags (carry, A-larger, equal, zero), generates the enable and set signals that control data transfers over the shared 8-bit bus and select the **ALU** operation.
 
 ##### Pin description
 
-| Pin   | Name | Direction | Width (in bits) | Description |
-| ----- | ---- | --------- | --------------- | ----------- |
-| op    | DATA | Output    | 3               |             |
-| bus 1 | SET  | Output    | 1               |             |
-| i/o   | DATA | Output    | 3               |             |
-| C     | DATA | Input     | 1               |             |
-| A     | DATA | Input     | 1               |             |
-| E     | DATA | Input     | 1               |             |
-| Z     | DATA | Input     | 1               |             |
+| Pin   | Role | Direction | Width (in bits) | Description                                             |
+| ----- | ---- | --------- | --------------- | ------------------------------------------------------- |
+| op    | DATA | Output    | 3               | Controls which operation will be carried by the **ALU** |
+| bus 1 | SET  | Output    | 1               | Activates **Bus** **1** device                          |
+| i/o   | DATA | Output    | 3               | *(not documented yet)*                                  |
+| C     | DATA | Input     | 1               | Means the **Carry** **out** flag is on                  |
+| A     | DATA | Input     | 1               | Means the **a-larger** flag is on                       |
+| E     | DATA | Input     | 1               | Means the **Equal** flag is on                          |
+| Z     | DATA | Input     | 1               | Means the **Zero** flag is on                           |
 
-The control section can set every register in the cpu and enable all of them except the IR and TMP registers. Since the book didn't name the pins setting or enabling these registers we will create names for them for the sake of documentation.
+The **control section** can set every register in the **CPU** and enable all of them except the **IR** and **TMP** registers. Since the book didn't name the pins setting or enabling these registers we will create names for them for the sake of documentation.
 
-| Pin            | Name   | Direction | Width (in bits) | Description                           |
-| -------------- | ------ | --------- | --------------- | ------------------------------------- |
-| s0, s1, s2, s3 | SET    | Output    | 1 (each)        | Sets the general purpose registers    |
-| s_tmp          | SET    | Output    | 1               |                                       |
-| s_iar          | SET    | Output    | 1               |                                       |
-| s_ir           | SET    | Output    | 1               |                                       |
-| s_acc          | SET    | Output    | 1               |                                       |
-| s_mar          | SET    | Output    | 1               | Sets the [MAR](#314-mar) register     |
-| s_ram          | SET    | Output    | 1               |                                       |
-| s_flags        | SET    | Output    |                 |                                       |
-| e0, e1, e3, e4 | ENABLE | Output    | 1               | Enables the general purpose registers |
-| e_iar          | ENABLE | Output    | 1               |                                       |
-| e_acc          | ENABLE | Output    | 1               |                                       |
-| e_mar          | ENABLE | Output    | 1               |                                       |
-| e_ram          | ENABLE | Output    | 1               |                                       |
+| Pin            | Role   | Direction | Width (in bits) |
+| -------------- | ------ | --------- | --------------- |
+| s0, s1, s2, s3 | SET    | Output    | 1 (each)        |
+| s_tmp          | SET    | Output    | 1               |
+| s_iar          | SET    | Output    | 1               |
+| s_ir           | SET    | Output    | 1               |
+| s_acc          | SET    | Output    | 1               |
+| s_mar          | SET    | Output    | 1               |
+| s_ram          | SET    | Output    | 1               |
+| s_flags        | SET    | Output    | 1               |
+| e0, e1, e3, e4 | ENABLE | Output    | 1               |
+| e_iar          | ENABLE | Output    | 1               |
+| e_acc          | ENABLE | Output    | 1               |
+| e_mar          | ENABLE | Output    | 1               |
+| e_ram          | ENABLE | Output    | 1               |
 
-And finally an 8 bit pin feeds the contents of the IR register when the s_ir is on
+And finally an 8 bit pin feeds the contents of the **IR** register when the s_ir is on
 
-| Pin      | Name | Direction | Width (in bits) | Description                                                     |
-| -------- | ---- | --------- | --------------- | --------------------------------------------------------------- |
-| ir_input | DATA | Input     | 8               | Inputs the value in instruction register in the control section |
+| Pin      | Role | Direction | Width (in bits) | Description                                                         |
+| -------- | ---- | --------- | --------------- | ------------------------------------------------------------------- |
+| ir_input | DATA | Input     | 8               | Inputs the value from instruction register into the control section |
 
 ##### stepper
 
