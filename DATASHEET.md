@@ -1,28 +1,40 @@
 
 
 
-# Intro 
+# Introduction
 
 The 'Scott Cpu' is a simple educational 8-bit processor designed by J. Clark Scott in his book [But How Do It Know? - The Basic Principles of Computers for Everyone](https://www.amazon.com/dp/0615303765?lv=shuf&channelId=500&plpRedirect=mhFallback) as an educational tool to teach computer principles to its readers.
-The goal of this document is to serve as a datasheet for the processor, and the system surrounding it, that was studied in the book mentioned above to serve as a reference for a future project, a "Scott Cpu emulator" written in the C++ programming language.
-
----
-# Prequisites
+Since the processor mentioned in the book have no datasheet, the goal of this document is to serve as a datasheet for the processor that was studied in the book mentioned above to serve as a reference for a future project, a "Scott CPU emulator" written in the C++ programming language.
+***N.B.*** I cannot stress enough how important it is to read the book first. This document is not meant to replace the original material. It was written as a reference for developing the emulator and for using it.
 
 ---
 # Table of contents
 
-
+1. [Terminology](#3-terminology)
+2. [System overview](#2-system-overview)
+3. [Components](#3-components)
+	1. [RAM](#31-ram)
+		1. [Description](#311-description)
+		2. [Specification](#312-specification)
+		3. [Pin description](#313-pin-description)
+		4. [MAR](#314-mar)
+	2. [CPU](#32-ram)
+		1. [Overview](#321-overview)
+		2. [Specification](#322-specification)
+		3. [Pin description](#323-pin-description)
+		4. [Registers](#324-registers)
+		5. [Bus 1](#325-bus-1)
+		6. 
 
 ---
 # 1. Terminology
 
 In addition to the terms used in J. Clark Scott's _But How Do It Know?_, this document defines the following terms for clarity:
 
-- **Component:** A major functional unit of the system. This includes the CPU, the [RAM](#31-ram), and every peripheral connected to the CPU (such as the keyboard and screen).
+- **Component:** A major functional unit of the system. This includes the CPU, the RAM, and every peripheral connected to the CPU (such as the keyboard and screen).
 - **Sub-component:** A part contained within a component. This includes registers (such as the MAR or the instruction register) and any other internal unit, such as the ALU.
-- **System:** The complete Scott CPU computer and the other components : CPU, [RAM](#31-ram), and peripherals together.
-- **Peripheral:** A component that is not the CPU or [RAM](#31-ram), such as the keyboard and screen.
+- **System:** The complete Scott CPU computer and the other components : CPU, RAM, and peripherals together.
+- **Peripheral:** A component that is not the CPU or RAM, such as the keyboard and screen.
 - **Pin:** A single connection point of a component or sub-component. Every component connects to an outside wire via a pin.
 - **Signal:** The value carried on a pin or wire (high/low, 1/0).
 - **Port:** A group of related pins treated as one unit (e.g., an 8-bit data port).
@@ -40,7 +52,7 @@ And since this reference is meant for people who already read the book, terms de
 ## 3.1 RAM
 #### 3.1.1 description 
 
-**The Scott CPU's** four general-purpose registers *(R0 to R3)* hold only 32 bits in total, which is far too little for storing programs and data. To make up for this, the system includes a main memory , [RAM](#31-ram) *(Random Access Memory)* consisting of 256 8-bit registers, giving a capacity of 256 bytes. Each location is identified by a unique 8-bit address in the range ```0x00``` to ```0xFF``` (0 to 255).
+**The Scott CPU's** four general-purpose registers *(R0 to R3)* hold only 32 bits in total, which is far too little for storing programs and data. To make up for this, the system includes a main memory , RAM *(Random Access Memory)* consisting of 256 8-bit registers, giving a capacity of 256 bytes. Each location is identified by a unique 8-bit address in the range ```0x00``` to ```0xFF``` (0 to 255).
 #### 3.1.2 Specification
 | Parameter           | Value                         |
 | ------------------- | ----------------------------- |
@@ -49,7 +61,7 @@ And since this reference is meant for people who already read the book, terms de
 | Number of addresses | 256 (```0x0``` to ```0xFF```) |
 | Address width       | 8 bits                        |
 | Data width          | 8 bits                        |
-| Sub-components      | [MAR](#314-mar)               |
+| Sub-components      | MAR                           |
 | Read operation      | 1 clock cycle                 |
 | Write operation     | 1 clock cycle                 |
 
@@ -154,7 +166,7 @@ Each instruction can be expressed in two forms: assembly and machine code.
 - **An assembly representation :** Each instruction is identified by a mnemonic, followed by its operands in the order listed in the instruction tables:
   ```<mnemonic> <operand 1>, <operand 2>``` 
   For example, to add register R1 to register R3 and store the result in R3: 
-  ```ADD R1, R3```
+  ```ADD R1 R3```
   Unlike the mahine code representation which is meant to be decoded by the cpu, the asssembly representation is meant to be a human readable version of machine.
 
 - **A machine code representation :** Each instruction is encoded as one or two bytes. The upper four bits of the first byte form the opcode field, which selects the operation. The remaining bits hold the operand fields. Instructions that carry immediate data, use a second byte for that value. The instruction formats and the meaning of each field are described below. Bit 7 is the most significant bit and bit 0 is the least significant bit.
@@ -162,16 +174,16 @@ Each instruction can be expressed in two forms: assembly and machine code.
 ![ALU block diagram](docs/fields.png)
 ##### Arithmetic and logic instructions
 
-| Instruction  | Mnemonic | Opcode     | Operands            | Width | Description                                          |
-| ------------ | -------- | ---------- | ------------------- | ----- | ---------------------------------------------------- |
-| add          | ADD      | ```1000``` | ```RA```, ```RB```  | 8     | Add ```RA``` and ```RB``` and put answer in ```RB``` |
-| shift right  | SHR      | ```1001``` | ```RA```, ```RB```  | 8     | Shift ```RA``` Right and put answer in ```RB```      |
-| shift left   | SHL      | ```1010``` | ```RA```, ```RB```  | 8     | Shift ```RA``` Left and put the answer in ```RB```   |
-| not          | NOT      | ```1011``` | ```RA```, ```RB```  | 8     | Not ```RA``` and put the answer in ```RB```          |
-| and          | AND      | ```1100``` | ```RA```, ```RB```  | 8     | And ```RA``` and ```RB``` and put answer in ```RB``` |
-| or           | OR       | ```1101``` | ```RA```, ```RB```  | 8     | Or ```RA``` and ```RB``` and put answer in RB        |
-| exclusive or | XOR      | ```1110``` | ```RA```, ```RB```  | 8     | Exclusive OR ```RA``` and ```RB``` into ```RB```     |
-| compare      | CMP      | ```1111``` | ```RA```, ```RB```  | 8     | Compare ```RA``` and ```RB```                        |
+| Instruction  | Mnemonic | Opcode     | Operands           | Width | Description                                          |
+| ------------ | -------- | ---------- | ------------------ | ----- | ---------------------------------------------------- |
+| add          | ADD      | ```1000``` | ```RA```, ```RB``` | 8     | Add ```RA``` and ```RB``` and put answer in ```RB``` |
+| shift right  | SHR      | ```1001``` | ```RA```, ```RB``` | 8     | Shift ```RA``` Right and put answer in ```RB```      |
+| shift left   | SHL      | ```1010``` | ```RA```, ```RB``` | 8     | Shift ```RA``` Left and put the answer in ```RB```   |
+| not          | NOT      | ```1011``` | ```RA```, ```RB``` | 8     | Not ```RA``` and put the answer in ```RB```          |
+| and          | AND      | ```1100``` | ```RA```, ```RB``` | 8     | And ```RA``` and ```RB``` and put answer in ```RB``` |
+| or           | OR       | ```1101``` | ```RA```, ```RB``` | 8     | Or ```RA``` and ```RB``` and put answer in RB        |
+| exclusive or | XOR      | ```1110``` | ```RA```, ```RB``` | 8     | Exclusive OR ```RA``` and ```RB``` into ```RB```     |
+| compare      | CMP      | ```1111``` | ```RA```, ```RB``` | 8     | Compare ```RA``` and ```RB```                        |
 ##### Data movement instructions
 
 | Instruction | Mnemonic | Opcode     | Operands            | Width | Description                                           |
@@ -258,9 +270,6 @@ And finally an 8 bit pin feeds the contents of the IR register when the s_ir is 
 ##### stepper
 
 The **stepper** is a control unit component responsible for sequencing the execution of instructions. It generates a sequence of timing steps  that coordinate the different operations required during each instruction cycle. At each step, it activates one out of its 7 steps, step 1 to 6 are activated each clock cycle in order until the 7th which resets the stepper back to 1.
-
-
-
 ##### Timing
 
 | instuction       | step 1                               | step 2                    | step 3                     | . . .                              | step 7            |
