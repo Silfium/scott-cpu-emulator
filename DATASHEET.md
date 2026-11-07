@@ -10,7 +10,7 @@ Since the processor mentioned in the book have no datasheet, the goal of this do
 ---
 # Table of contents
 
-1. [Terminology](#3-terminology)
+1. [Terminology](#1-terminology)
 2. [System overview](#2-system-overview)
 3. [Components](#3-components)
 	1. [RAM](#31-ram)
@@ -18,13 +18,15 @@ Since the processor mentioned in the book have no datasheet, the goal of this do
 		2. [Specification](#312-specification)
 		3. [Pin description](#313-pin-description)
 		4. [MAR](#314-mar)
-	2. [CPU](#32-ram)
+	2. [CPU](#32-cpu)
 		1. [Overview](#321-overview)
 		2. [Specification](#322-specification)
 		3. [Pin description](#323-pin-description)
 		4. [Registers](#324-registers)
 		5. [Bus 1](#325-bus-1)
-		6. 
+		6. [ALU](#326-alu)
+		7. [Instruction set](#327-instruction-set)
+		8. [Control Section and timing](#328-control-unit-and-timing)
 
 ---
 # 1. Terminology
