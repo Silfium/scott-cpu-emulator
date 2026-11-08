@@ -210,8 +210,8 @@ Each instruction can be expressed in two forms: assembly and machine code.
 | -------- | ---------- | ---------- | ----- | --------------------------------------- |
 | JMPR     | ```0011``` | ```RB```   | 8     | Jump to the address in ```RB```         |
 | JMP      | ```0100``` | ```addr``` | 16    | Jump to ```Addr```                      |
-| JA       | ```0101``` | ```addr``` | 16    | Jump if Carry is on                     |
-| JC       | ```0101``` | ```addr``` | 16    | Jump if A is larger than B              |
+| JA       | ```0101``` | ```addr``` | 16    | Jump if A is larger than B              |
+| JC       | ```0101``` | ```addr``` | 16    | Jump if Carry is on                     |
 | JE       | ```0101``` | ```addr``` | 16    | Jump if A is Equal to B                 |
 | JZ       | ```0101``` | ```addr``` | 16    | Jump if the answer is Zero              |
 | JCA      | ```0101``` | ```addr``` | 16    | Jump if Carry or A larger               |

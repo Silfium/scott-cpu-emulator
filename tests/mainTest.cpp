@@ -14,6 +14,7 @@
 
 void test_get_rb();
 void test_get_ra();
+void test_get_opcode();
 void test_alu();
 
 int main() {
@@ -74,4 +75,10 @@ void test_get_ra() {
         (isWrong) ? std::cout << " No\n" << std::endl : std::cout << " Yes\n" << std::endl;
 }
 
-void test_alu() {}
+void test_get_opcode() {
+	std::cout << SEPERATOR;
+	std::cout << "test get opcode function :\n";
+}
+
+void test_alu() {
+}
