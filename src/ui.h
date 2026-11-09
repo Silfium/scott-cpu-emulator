@@ -26,7 +26,7 @@ inline void display_flag_register(int buttonID) {
 
 	ImGui::PushID(buttonID);
 	//register name and display
-	ImGui::Dummy(ImVec2(0.0f, 3.0f));
+	//ImGui::Dummy(ImVec2(0.0f, 3.0f));
         ImGui::SetWindowFontScale(1.2f);
         ImGui::Text("flag");
         ImGui::SetWindowFontScale(1.0f);
@@ -43,18 +43,18 @@ inline void display_flag_register(int buttonID) {
         ImGui::SameLine();
 	ImGui::Button("Z", ImVec2(48, 28));
 	//end style
-        ImGui::Dummy(ImVec2(0.0f, 3.0f));
-        ImGui::Separator();
+        //ImGui::Dummy(ImVec2(0.0f, 3.0f));
+        //ImGui::Separator();
         ImGui::PopStyleVar(2);
         ImGui::PopStyleColor(3);
         ImGui::PopID();
 }
 
-inline void display_register(std::string regName, Reg reg, ImFont* regular, ImFont* bold, int buttonID) {
+inline void display_register(std::string regName, uint8_t value, int buttonID) {
 
         ImGui::PushID(buttonID);
 	// register name display
-        ImGui::Dummy(ImVec2(0.0f, 3.0f));
+        //ImGui::Dummy(ImVec2(0.0f, 3.0f));
         ImGui::SetWindowFontScale(1.2f);
         ImGui::Text("%s", regName.c_str());
         ImGui::SetWindowFontScale(1.0f);
@@ -65,13 +65,13 @@ inline void display_register(std::string regName, Reg reg, ImFont* regular, ImFo
         ImGui::SetCursorPosX(ImGui::GetWindowWidth() - 225.0f);
 
         //ImGui::SeparatorEX(ImGuiSeparatorFlags_Vertical);
-        ImGui::Button(print_binary(reg.value).c_str(), ImVec2(96, 28)); 
+        ImGui::Button(print_binary(value).c_str(), ImVec2(96, 28)); 
         ImGui::SameLine();
         ImGui::Button("0xFF", ImVec2(56, 28));
         ImGui::SameLine();
         ImGui::Button("255", ImVec2(48, 28));
-        ImGui::Dummy(ImVec2(0.0f, 3.0f));
-        ImGui::Separator();
+        //ImGui::Dummy(ImVec2(0.0f, 3.0f));
+        //ImGui::Separator();
         ImGui::PopStyleVar(2);
         ImGui::PopStyleColor(3);
         ImGui::PopID();

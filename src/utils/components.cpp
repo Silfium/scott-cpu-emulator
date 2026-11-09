@@ -39,7 +39,7 @@ void CPU::step_cycle() {
 	//stepper in 1
 	bus1 = true;
 	iar.enable();
-	alu(0);  // rework this part need to figure out how to get the bitch ass bus 1 involved
+	alu(0);
 	ram.mar.set();
 	bus1 = false;
 	//stepper in 2

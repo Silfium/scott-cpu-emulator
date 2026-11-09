@@ -11,6 +11,7 @@ struct Reg {
 	void enable();
 };
 
+
 enum flagType : uint8_t {CARRY_OUT=1, A_LARGER=2, EQUAL=4, ZERO=8};
 struct flagReg {
 	uint8_t value;
@@ -28,6 +29,7 @@ struct CPU   {
 	bool bus1;
 	uint8_t stepper;
 
+	void execute();
 	void step_cycle();
 	// decode 
 	void decode_ir();
@@ -39,10 +41,11 @@ struct CPU   {
 	void reset();
 }; inline CPU cpu;
 
+
 struct RAM {
+	
 	std::array<uint8_t, 256> ram256{};
 	Reg mar;
-
 	void enable();
 	void set();
 	

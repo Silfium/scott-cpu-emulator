@@ -100,16 +100,20 @@ int main() {
 		ImGui::SetNextWindowSize(ImVec2(284, ImGui::GetIO().DisplaySize.y), ImGuiCond_Always);
 		ImGui::Begin("REGISTERS", nullptr, ImGuiWindowFlags_NoResize |
 						   ImGuiWindowFlags_NoCollapse);
-		display_register("R0 ", cpu.general_purpose[0], fontRegular, fontBold, 1);
-		display_register("R1 ", cpu.general_purpose[1], fontRegular, fontBold, 2);
-		display_register("R2 ", cpu.general_purpose[2], fontRegular, fontBold, 3);
-		display_register("R3 ", cpu.general_purpose[3], fontRegular, fontBold, 4);
-		display_register("TMP", cpu.tmp, fontRegular, fontBold, 5);
-		display_register("ACC", cpu.acc, fontRegular, fontBold, 6);
-		display_register("IR ", cpu.ir, fontRegular, fontBold, 7);
-		display_register("IAR", cpu.iar, fontRegular, fontBold, 8);
+		display_register("R0 ", cpu.general_purpose[0].value, 1);
+		display_register("R1 ", cpu.general_purpose[1].value, 2);
+		display_register("R2 ", cpu.general_purpose[2].value, 3);
+		display_register("R3 ", cpu.general_purpose[3].value, 4);
+		ImGui::Separator();
+		display_register("TMP", cpu.tmp.value, 5);
+		display_register("ACC", cpu.acc.value, 6);
+		ImGui::Separator();
+		display_register("IR ", cpu.ir.value, 7);
+		display_register("IAR", cpu.iar.value, 8);
+		ImGui::Separator();
 		display_flag_register(9);
-		display_register("mar", ram.mar, fontRegular, fontBold, 10);
+		ImGui::Separator();
+		display_register("mar", ram.mar.value, 10);
 		ImGui::End();
 
 		//---------------------------------|
