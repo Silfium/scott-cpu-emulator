@@ -3,6 +3,29 @@
 #include <array>
 
 
+//--------------------------|
+//instruction values, opcodes
+#define LD   0
+#define ST   1
+#define DATA 2
+#define JMPR 3
+#define JMP  4
+#define J    5
+#define CLF  6
+#define IO   7
+#define ADD  8
+#define SHR  9
+#define SHL  10
+#define NOT  11
+#define AND  12
+#define OR   13
+#define XOR  14
+#define CMP  15
+
+
+
+
+
 inline uint8_t system_bus;
 
 struct Reg {
